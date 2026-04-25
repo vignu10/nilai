@@ -26,7 +26,7 @@ If you prefer step-by-step control:
 
 ```bash
 npx @vignu10/nilai init              # Scaffold focus session files
-claude mcp add nilai -- npx -y @vignu10/nilai-mcp   # Register MCP server
+claude mcp add nilai -- npx -y -p @vignu10/nilai nilai-mcp   # Register MCP server
 npx @vignu10/nilai install-hooks     # Install prompt hook
 ```
 
@@ -66,6 +66,19 @@ Every session has an intensity that controls how aggressive the ADHD guardrails 
 | `high` | Refuses off-scope actions entirely | Warns at 25% remaining, stalling at 15% | Deadline-driven, high-stakes |
 
 Tell Claude the intensity when starting: "Start a high-intensity session for..."
+
+## Uninstall
+
+```bash
+npx @vignu10/nilai uninstall
+```
+
+This removes:
+- `.focus/` directory (all session state)
+- `NILAI.md`
+- `@NILAI.md` reference from `CLAUDE.md`
+- Nilai hooks from `.claude/settings.json`
+- MCP server registration (`claude mcp remove nilai`)
 
 ## What `nilai init` does
 
@@ -147,7 +160,7 @@ claude mcp list
 
 # If failed, remove and re-register
 claude mcp remove nilai
-claude mcp add nilai -- npx -y @vignu10/nilai-mcp
+claude mcp add nilai -- npx -y -p @vignu10/nilai nilai-mcp
 
 # Then restart your Claude Code session
 ```
@@ -155,7 +168,7 @@ claude mcp add nilai -- npx -y @vignu10/nilai-mcp
 If it still fails, test the server directly:
 
 ```bash
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' | npx -y @vignu10/nilai-mcp
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' | npx -y -p @vignu10/nilai nilai-mcp
 ```
 
 If you see a JSON response, the server works — the issue is your Claude Code registration. If it errors, check your Node.js version (`node >= 20`).

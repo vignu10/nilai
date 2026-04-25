@@ -9,13 +9,13 @@ export function runSetup(cwd: string): void {
   // Step 2: register MCP server
   console.log("\n=== Step 2: Registering MCP server ===\n");
   try {
-    execSync('claude mcp add nilai -- npx -y @vignu10/nilai-mcp', {
+    execSync('claude mcp add nilai -- npx -y -p @vignu10/nilai nilai-mcp', {
       stdio: "inherit",
     });
     console.log("MCP server registered.");
   } catch {
     console.log("Could not register MCP server. Run manually:");
-    console.log("  claude mcp add nilai -- npx -y @vignu10/nilai-mcp");
+    console.log("  claude mcp add nilai -- npx -y -p @vignu10/nilai nilai-mcp");
   }
 
   // Step 3: install hooks
