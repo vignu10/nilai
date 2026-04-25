@@ -1,8 +1,7 @@
 node_modules/
 dist/
 .focus/
+.claude/
 CLAUDE.md
 NILAI.md
 LATER.md
-
-.focus/session.json
