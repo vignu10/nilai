@@ -4,8 +4,8 @@
   "description": "ADHD-friendly focus sessions for Claude Code via CLI skills",
   "type": "module",
   "bin": {
-    "nilai": "./dist/cli.js",
-    "nilai-hook": "./dist/hook.js"
+    "nilai": "dist/cli.js",
+    "nilai-hook": "dist/hook.js"
   },
   "files": [
     "dist",

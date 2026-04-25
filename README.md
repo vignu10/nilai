@@ -29,6 +29,7 @@ If you prefer step-by-step control:
 ```bash
 npx @vignu10/nilai init              # Scaffold focus session files + slash commands
 npx @vignu10/nilai install-hooks     # Install hooks (UserPromptSubmit, SessionStart, PostToolUse, Stop)
+npx @vignu10/nilai update            # Update hooks, NILAI.md protocol, and skills to latest version
 ```
 
 ## What Nilai does
@@ -48,7 +49,17 @@ npx @vignu10/nilai install-hooks     # Install hooks (UserPromptSubmit, SessionS
 Claude automatically runs `nilai <command>` via Bash based on the NILAI.md protocol loaded in your CLAUDE.md. No user action needed — Claude starts sessions, logs milestones, parks tangents, and ends with a retro on its own. You can also run any command directly in your terminal:
 
 ```bash
-nilai start "Add retry logic" --criteria "Retries on transient failures" --time 45
+# Start a session with multiple criteria
+nilai start "Add retry logic" \
+  --criteria "Retries on transient failures" \
+  --criteria "Exponential backoff with jitter" \
+  --criteria "Tests pass" \
+  --time 45 \
+  --intensity high
+
+# Or quick session with auto-generated criteria
+nilai quick "Fix the header" --time 15
+
 nilai status
 nilai log "Added retry with exponential backoff"
 nilai end
@@ -76,6 +87,15 @@ nilai end
 | `/focus-recent` | 7-day session history summary |
 | `/focus-list-parked` | Review parked ideas |
 
+### Additional commands
+
+| Command | What it does |
+|---------|-------------|
+| `nilai skills` | List all available slash commands with descriptions |
+| `nilai update` | Update hooks, NILAI.md protocol, and skill files to latest version |
+
+Use `nilai update` after installing a new version of Nilai to get the latest protocol and skill definitions.
+
 ## Hooks (automatic, zero user action)
 
 Nilai registers four Claude Code hooks that run without you doing anything:
@@ -97,7 +117,15 @@ Every session has an intensity that controls how aggressive the ADHD guardrails 
 | `medium` | Proposes parking for tangents (default) | Warns at 10% remaining, stalling at 30% | Normal focused work |
 | `high` | Refuses off-scope actions entirely | Warns at 25% remaining, stalling at 15% | Deadline-driven, high-stakes |
 
-Tell Claude the intensity when starting: "Start a high-intensity session for..."
+Set intensity via CLI flag or tell Claude when starting:
+
+```bash
+# CLI
+nilai start "Fix auth" --criteria "Login works" --time 30 --intensity high
+
+# Or in conversation
+Claude: Start a high-intensity session to fix the auth bug...
+```
 
 ## Uninstall
 
@@ -115,10 +143,11 @@ This removes:
 
 ## What `nilai init` does
 
-- Creates `.focus/` directory (session state, fully gitignored)
+- Creates `.focus/` directory for session state (fully gitignored)
+- Creates `.focus/history/` for archived sessions
 - Creates `NILAI.md` with the focus protocol
 - Creates or updates `CLAUDE.md` with `@NILAI.md` reference
-- Updates `.gitignore` for session state, skills, and LATER.md
+- Updates `.gitignore` for `.focus/`, `.claude/skills/focus*/`, and `LATER.md`
 - Installs 15 slash commands to `.claude/skills/`
 
 ## Example session
@@ -228,6 +257,10 @@ Archived sessions in `.focus/history/` are safe to keep or delete.
 
 Re-run `npx @vignu10/nilai install-hooks` and check `.claude/settings.json` has entries for `UserPromptSubmit`, `SessionStart`, `PostToolUse`, and `Stop`.
 
+### Skills out of date or missing features
+
+Run `npx @vignu10/nilai update` to refresh hooks, NILAI.md protocol, and skill files to the latest version.
+
 ## Contributing
 
 Contributions are welcome. To get started:
@@ -263,26 +296,42 @@ nilai end
 
 ```
 src/
-  cli.ts                 # CLI entry (init, setup, start, status, end, ...)
+  cli.ts                 # CLI entry (init, setup, update, uninstall, and focus commands)
   hook.ts                # Hook router (dispatches by event type)
-  hooks/                 # Hook handlers
-    user-prompt-submit.ts
-    session-start.ts     # Orphan sweep + snapshot restore
-    post-tool-use.ts     # Snapshot save + time nudge + scope drift + expiry
-    stop.ts              # Auto-end with retro
-  tools/                 # Focus tool handlers (shared by CLI and hooks)
   cli/                   # CLI command implementations
+    init.ts              # Initialize .focus/, NILAI.md, CLAUDE.md, skills, gitignore
+    install-hooks.ts     # Register hooks in .claude/settings.json
+    install-skills.ts    # Install skill files to .claude/skills/
+    update.ts            # Update hooks, NILAI.md, and skills
+    uninstall.ts         # Remove all Nilai artifacts
     dispatch.ts          # Focus subcommand routing
     run-tool.ts          # Handler result adapter
-    install-skills.ts    # Skill file installation
+  hooks/                 # Hook handlers
+    user-prompt-submit.ts  # Inject session context, check expiry
+    session-start.ts       # Orphan sweep — surface abandoned sessions
+    post-tool-use.ts       # Snapshot save, time nudge, scope drift, expiry
+    stop.ts                # Auto-end with retro
+  tools/                 # Focus tool handlers (shared by CLI and hooks)
+    focus_start.ts
+    focus_quick.ts
+    focus_status.ts
+    focus_end.ts
+    focus_resume.ts
+    focus_check.ts
+    focus_park.ts
+    focus_log.ts
+    focus_progress.ts
+    focus_pulse.ts
+    focus_scope_expand.ts
+    focus_sessions.ts
+    focus_recent.ts
+    focus_list_parked.ts
   state/                 # Session, history, LATER.md read/write
-  validation/            # Vague-task detection
-  util/                  # Time formatting and nudges
   templates/             # NILAI.md template
 source/
   skills/                # 15 slash command skill definitions
     focus/SKILL.md       # Umbrella skill
-    focus-start/SKILL.md # Individual skills
+    focus-start/SKILL.md # Individual skills (focus-start, focus-quick, etc.)
     ...
 ```
 
