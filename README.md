@@ -10,22 +10,24 @@ Claude Code makes it frictionless to drift. One sentence takes you from "fix the
 
 ## Quick start
 
-Run these two commands in your project directory:
+One command in your project directory:
 
 ```bash
-# 1. Register the MCP server (one-time)
-claude mcp add nilai -- npx -y @vignu10/nilai-mcp
-
-# 2. Scaffold focus session files
-npx @vignu10/nilai init
+npx @vignu10/nilai setup
 ```
+
+That's it. This registers the MCP server, scaffolds the focus session files, and installs the prompt hook.
 
 Done. Start a Claude Code session and tell it what you're working on. Nilai handles the rest.
 
-**Optional** — install the prompt hook for automatic session reminders:
+### Individual commands
+
+If you prefer step-by-step control:
 
 ```bash
-npx @vignu10/nilai install-hooks
+npx @vignu10/nilai init              # Scaffold focus session files
+claude mcp add nilai -- npx -y @vignu10/nilai-mcp   # Register MCP server
+npx @vignu10/nilai install-hooks     # Install prompt hook
 ```
 
 ## What Nilai does

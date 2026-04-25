@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "build": "tsdown && node -e \"['cli','server','hook'].forEach(f=>{const p='dist/'+f+'.js';const c=require('fs').readFileSync(p,'utf8');require('fs').writeFileSync(p,'#!/usr/bin/env node\\n'+c)})\"",
+    "setup": "node dist/cli.js setup",
     "dev": "tsx src/server.ts",
     "lint": "tsc --noEmit",
     "test": "vitest run",
