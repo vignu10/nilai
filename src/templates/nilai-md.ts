@@ -18,6 +18,13 @@ When starting a session, you can set an intensity level:
 
 Ask the user if they want a specific intensity, or default to medium.
 
+## Session recovery
+
+- On session start, call \`focus_status\` first. If an orphaned session is found (active session from before), surface it before doing anything else.
+- Offer to resume it with \`focus_resume\` or end it and start fresh.
+- If the user says "where was I?" or "what was I doing?", call \`focus_status\` — it includes the last activity snapshot.
+- If the session was abandoned (expired after 30min of inactivity), acknowledge briefly and offer to resume or start fresh.
+
 ## During work
 
 - Before any non-continuation action, call \`focus_check\` with the intended action.

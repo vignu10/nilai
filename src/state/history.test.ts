@@ -20,6 +20,7 @@ const mockSession: Session = {
   task: "Add retry logic",
   done_criteria: ["Done"],
   time_box_minutes: 30,
+  intensity: "medium",
   started_at: "2026-04-25T12:00:00.000Z",
   milestones: [],
   parked_count: 0,

@@ -1,3 +1,11 @@
+export type Snapshot = {
+  last_file: string;
+  last_line: number | null;
+  last_action: string;
+  last_tool: string;
+  at: string;
+};
+
 export type Session = {
   id: string;
   task: string;
@@ -7,8 +15,11 @@ export type Session = {
   started_at: string;
   milestones: { at: string; text: string }[];
   parked_count: number;
-  status: "active" | "ended";
+  status: "active" | "ended" | "abandoned";
   ended_at?: string;
+  snapshot?: Snapshot;
+  abandoned_at?: string;
+  abandonment_reason?: "idle" | "user_ended" | "replaced";
 };
 
 import { readFile, writeFile, unlink } from "node:fs/promises";

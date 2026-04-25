@@ -1,36 +1,38 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import type { Session } from "./state/session.js";
+import { handleUserPromptSubmit } from "./hooks/user-prompt-submit.js";
+import { handleSessionStart } from "./hooks/session-start.js";
+import { handlePostToolUse } from "./hooks/post-tool-use.js";
 
-function main(): void {
+async function main(): Promise<void> {
   const cwd = process.cwd();
-  const sessionPath = resolve(cwd, ".focus", "session.json");
 
-  let session: Session | null = null;
+  // Read stdin for hook event data
+  let input: Record<string, unknown> = {};
   try {
-    const data = readFileSync(sessionPath, "utf-8");
-    session = JSON.parse(data);
+    const chunks: Buffer[] = [];
+    for await (const chunk of process.stdin) {
+      chunks.push(chunk as Buffer);
+    }
+    const raw = Buffer.concat(chunks).toString("utf-8").trim();
+    if (raw) {
+      input = JSON.parse(raw);
+    }
   } catch {
-    // no session — exit silently
-    process.exit(0);
+    // No stdin or parse failure — fall back to legacy UserPromptSubmit
+    handleUserPromptSubmit(cwd);
+    return;
   }
 
-  if (!session || session.status !== "active") {
-    process.exit(0);
+  const cwdOverride = (input.cwd as string) ?? cwd;
+
+  // Detect event from input shape
+  if ("tool_name" in input || "tool_input" in input) {
+    handlePostToolUse(cwdOverride, input as { tool_name?: string; tool_input?: Record<string, unknown> });
+  } else if ("matcher" in input || "hookEventName" in input) {
+    handleSessionStart(cwdOverride);
+  } else {
+    // Default: UserPromptSubmit (original behavior)
+    handleUserPromptSubmit(cwdOverride);
   }
-
-  const elapsed = Math.round(
-    (Date.now() - new Date(session.started_at).getTime()) / 60_000,
-  );
-
-  const output = {
-    hookSpecificOutput: {
-      hookEventName: "UserPromptSubmit",
-      additionalContext: `Active focus session: "${session.task}". Elapsed: ${elapsed}m of ${session.time_box_minutes}m budget. ${session.milestones.length} milestones logged. ${session.parked_count} items parked.`,
-    },
-  };
-
-  process.stdout.write(JSON.stringify(output));
 }
 
-main();
+main().catch(() => process.exit(0));

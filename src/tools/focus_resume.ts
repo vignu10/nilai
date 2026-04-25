@@ -35,6 +35,8 @@ export async function handleFocusResume(
   const now = new Date();
   const id = now.toISOString().replace(/[-:T]/g, "").slice(0, 15);
 
+  const wasAbandoned = old.status === "abandoned";
+
   const session: Session = {
     id,
     task: old.task,
@@ -45,20 +47,31 @@ export async function handleFocusResume(
     milestones: old.milestones,
     parked_count: old.parked_count,
     status: "active",
+    snapshot: old.snapshot,
   };
 
   await writeSession(cwd, session);
+
+  const lines = [
+    `Resumed: "${session.task}"`,
+    `New session ID: ${session.id}`,
+    `Previous milestones carried over: ${session.milestones.length}`,
+    `Time box restarted: ${session.time_box_minutes}min`,
+  ];
+
+  if (wasAbandoned) {
+    lines.unshift(`Resuming abandoned session.`);
+  }
+
+  if (old.snapshot) {
+    lines.push(`Last activity: ${old.snapshot.last_action}`);
+  }
 
   return {
     content: [
       {
         type: "text",
-        text: [
-          `Resumed: "${session.task}"`,
-          `New session ID: ${session.id}`,
-          `Previous milestones carried over: ${session.milestones.length}`,
-          `Time box restarted: ${session.time_box_minutes}min`,
-        ].join("\n"),
+        text: lines.join("\n"),
       },
     ],
   };
