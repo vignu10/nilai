@@ -12,6 +12,9 @@ const FOCUS_COMMANDS = [
   "start", "quick", "status", "end", "resume",
   "check", "park", "log", "progress", "pulse",
   "scope-expand", "sessions", "recent", "list-parked", "skills",
+  "downtime", "downtime-end", "day-start", "day-end", "day-status",
+  "intensity", "unpark",
+  "break", "stuck", "template", "energy", "capture", "calibration",
 ];
 
 switch (command) {
@@ -59,5 +62,20 @@ switch (command) {
     console.log("  nilai recent          7-day session summary");
     console.log("  nilai list-parked     Show parked ideas");
     console.log("  nilai skills          List available slash commands");
+    console.log("  nilai downtime        Start a downtime/break session");
+    console.log("  nilai downtime-end    End downtime session");
+    console.log("  nilai day-start       Start day tracking");
+    console.log("  nilai day-end         End day tracking and show summary");
+    console.log("  nilai day-status      Show current day progress");
+    console.log("  nilai intensity <low|medium|high>  Change session intensity");
+    console.log("  nilai unpark [<number>]  List or retrieve parked ideas");
+    console.log("");
+    console.log("New features:");
+    console.log("  nilai break            Take a break (records break time)");
+    console.log("  nilai stuck <response>  Handle being stuck (investigate|park|split)");
+    console.log("  nilai template <action> Manage session templates");
+    console.log("  nilai energy <action>  Track energy levels (start|end|stats|recommend)");
+    console.log("  nilai capture <thought> Quick capture thoughts without breaking focus");
+    console.log("  nilai calibration <action>  View time estimation accuracy");
     process.exit(1);
 }

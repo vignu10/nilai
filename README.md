@@ -41,6 +41,11 @@ npx @vignu10/nilai update            # Update hooks, NILAI.md protocol, and skil
 - **Surfaces time blindness** via explicit time boxes and end-of-session retros.
 - **Recovers abandoned sessions** — if you leave and come back, Nilai shows you exactly where you were.
 - **Auto-ends sessions** when you close Claude Code (Stop hook retro).
+- **Prevents hyperfocus burnout** with Pomodoro-style break reminders.
+- **Detects when you're stuck** and offers structured help options.
+- **Learns your velocity** via time estimation calibration.
+- **Tracks energy patterns** to identify your most productive times.
+- **Captures fleeting thoughts** without breaking your flow.
 
 ## Two ways to use it
 
@@ -67,7 +72,7 @@ nilai end
 
 ### Slash commands (user-invoked)
 
-15 slash commands are installed to `.claude/skills/` for direct invocation in Claude Code:
+28 slash commands are installed to `.claude/skills/` for direct invocation in Claude Code:
 
 | Command | What it does |
 |---------|-------------|
@@ -86,6 +91,12 @@ nilai end
 | `/focus-sessions` | List all sessions for the project |
 | `/focus-recent` | 7-day session history summary |
 | `/focus-list-parked` | Review parked ideas |
+| `/focus-break` | Take a break (records break time) |
+| `/focus-stuck` | Handle being stuck (investigate|park|split) |
+| `/focus-template` | Manage or use session templates |
+| `/focus-energy` | Track energy levels (start|end|stats|recommend) |
+| `/focus-capture` | Quick capture thoughts without breaking focus |
+| `/focus-calibration` | View time estimation accuracy |
 
 ### Additional commands
 
@@ -104,7 +115,7 @@ Nilai registers four Claude Code hooks that run without you doing anything:
 |------|-------------|
 | **SessionStart** | Orphan sweep — if you left an active session, surfaces it with last activity snapshot. "You were editing `auth.ts` — adding retry logic (47min ago)." |
 | **UserPromptSubmit** | Injects active session context into every prompt so Claude knows what you're working on |
-| **PostToolUse** | Auto-saves snapshots on file edits. Time nudges if >50% timebox elapsed with <50% criteria done. Scope drift flags if editing unrelated files. Session expiry after 30min idle. |
+| **PostToolUse** | Auto-saves snapshots on file edits. Time nudges if >50% timebox elapsed with <50% criteria done. Scope drift flags if editing unrelated files. Break reminders at 25/45min intervals. Stuck detection after 15min of no milestones. Session expiry after 30min idle. |
 | **Stop** | Auto-ends the session with a retro when Claude Code closes |
 
 ## Intensity levels
@@ -127,6 +138,103 @@ nilai start "Fix auth" --criteria "Login works" --time 30 --intensity high
 Claude: Start a high-intensity session to fix the auth bug...
 ```
 
+## New Features
+
+### Session Templates
+
+Skip setup friction with pre-defined session configurations for common patterns:
+
+```bash
+# List available templates
+nilai template list
+
+# Use a template
+nilai start "Fix the login bug" template_id="debug-standard"
+
+# Built-in templates:
+# - debug-standard: 45min, high intensity, no breaks, 10min stuck threshold
+# - code-review-quick: 30min, medium intensity, 25min breaks
+# - feature-development: 90min, medium intensity, 45min breaks, 20min stuck threshold
+```
+
+Templates pre-fill time box, intensity, done criteria, and behavioral settings.
+
+### Break Reminders (Pomodoro)
+
+Prevent hyperfocus burnout with automatic break prompts:
+
+```bash
+# Enable breaks when starting a session
+nilai start "Build feature" --enable-breaks --break-type pomodoro_25
+
+# Or take a break manually
+nilai break --duration-minutes 10
+
+# Break prompts appear automatically at 25min or 45min intervals
+# based on session type
+```
+
+### Stuck Detection
+
+Get help when you've stopped making progress:
+
+```bash
+# After 15min of no milestones, Nilai prompts:
+# "No progress for 15min. Are you stuck?"
+#
+# Options:
+nilai stuck investigate  # Explore what's blocking systematically
+nilai stuck park         # Park this task and move on
+nilai stuck split        # Break into smaller tasks
+```
+
+### Energy Tracking
+
+Find your productive patterns by tracking energy levels:
+
+```bash
+# Track energy at session start/end
+nilai start "Write docs" energy_start=4
+# ... work ...
+nilai energy end --level=2
+
+# View patterns
+nilai energy stats
+
+# Get recommendation for current time
+nilai energy recommend
+```
+
+### Time Estimation Calibration
+
+Learn your actual velocity over time:
+
+```bash
+# Start with an estimate
+nilai start "Refactor API" estimated_minutes=60 --criteria "Tests pass"
+
+# End session records actual time taken
+nilai end
+
+# View accuracy stats
+nilai calibration stats
+
+# Get suggestion based on history
+nilai calibration suggest
+```
+
+### Quick Capture Inbox
+
+Capture thoughts without breaking your flow:
+
+```bash
+# During a session, capture a fleeting thought
+nilai capture "Check if the API has rate limiting"
+
+# Thoughts are saved to CAPTURE.md for later processing
+# No session interruption
+```
+
 ## Uninstall
 
 ```bash
@@ -134,7 +242,8 @@ npx @vignu10/nilai uninstall
 ```
 
 This removes:
-- `.focus/` directory (all session state)
+- `.focus/` directory (all session state, templates, energy data, calibration data, capture inbox)
+- `CAPTURE.md` (quick captured thoughts)
 - `NILAI.md`
 - `@NILAI.md` reference from `CLAUDE.md`
 - Nilai entries from `.gitignore`
@@ -147,8 +256,9 @@ This removes:
 - Creates `.focus/history/` for archived sessions
 - Creates `NILAI.md` with the focus protocol
 - Creates or updates `CLAUDE.md` with `@NILAI.md` reference
-- Updates `.gitignore` for `.focus/`, `.claude/skills/focus*/`, and `LATER.md`
-- Installs 15 slash commands to `.claude/skills/`
+- Updates `.gitignore` for `.focus/`, `.claude/skills/focus*/`, `LATER.md`, and `CAPTURE.md`
+- Initializes default session templates (debug, code-review, feature)
+- Installs 28 slash commands to `.claude/skills/`
 
 ## Example session
 
@@ -274,13 +384,18 @@ Everything lives in your repo. No cloud, no accounts, no telemetry.
 
 ```
 project-root/
-├── .focus/              # all gitignored
-│   ├── session.json    # active session (includes snapshot)
-│   └── history/        # archived sessions (ended + abandoned)
-├── .claude/skills/     # slash commands (gitignored)
-├── LATER.md            # parked ideas (gitignored)
-├── NILAI.md            # focus protocol for Claude
-└── CLAUDE.md           # references @NILAI.md
+├── .focus/                    # all gitignored
+│   ├── session.json          # active session (includes snapshot)
+│   ├── templates.json        # session templates
+│   ├── energy.json           # energy tracking data
+│   ├── calibration.json      # time estimation history
+│   ├── capture.json          # quick capture inbox
+│   └── history/              # archived sessions (ended + abandoned)
+├── .claude/skills/           # slash commands (gitignored)
+├── LATER.md                  # parked ideas (gitignored)
+├── CAPTURE.md                # quick captured thoughts (gitignored)
+├── NILAI.md                  # focus protocol for Claude
+└── CLAUDE.md                 # references @NILAI.md
 ```
 
 ## Principles
@@ -321,6 +436,14 @@ Delete the session file to start fresh:
 
 ```bash
 rm .focus/session.json
+```
+
+You can also reset specific data:
+```bash
+rm .focus/templates.json      # Reset templates
+rm .focus/energy.json         # Clear energy history
+rm .focus/calibration.json   # Clear calibration data
+rm .focus/capture.json        # Clear capture inbox
 ```
 
 Archived sessions in `.focus/history/` are safe to keep or delete.
@@ -398,12 +521,24 @@ src/
     focus_sessions.ts
     focus_recent.ts
     focus_list_parked.ts
-  state/                 # Session, history, LATER.md read/write
+    focus_break.ts        # NEW: break reminder
+    focus_stuck.ts        # NEW: stuck detection
+    focus_template.ts     # NEW: session templates
+    focus_energy.ts       # NEW: energy tracking
+    focus_capture.ts      # NEW: quick capture
+    focus_calibration.ts  # NEW: time estimation
+  state/                 # Session, history, LATER.md, templates, energy, calibration, capture
   templates/             # NILAI.md template
 source/
-  skills/                # 15 slash command skill definitions
+  skills/                # 28 slash command skill definitions
     focus/SKILL.md       # Umbrella skill
     focus-start/SKILL.md # Individual skills (focus-start, focus-quick, etc.)
+    focus-break/SKILL.md # NEW skills
+    focus-stuck/SKILL.md
+    focus-template/SKILL.md
+    focus-energy/SKILL.md
+    focus-capture/SKILL.md
+    focus-calibration/SKILL.md
     ...
 ```
 

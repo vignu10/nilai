@@ -1,7 +1,7 @@
 ---
 name: focus
-description: "ADHD-friendly focus session management for Claude Code. Provides structured work sessions with time boxing, milestone tracking, and scope management. Use when starting work, checking progress, parking tangents, or ending a session. Accepts subcommands: start, quick, status, end, resume, check, park, log, progress, pulse, scope-expand, sessions, recent, list-parked."
-argument-hint: "[start|quick|status|end|resume|check|park|log|progress|pulse|scope-expand|sessions|recent|list-parked]"
+description: "ADHD-friendly focus session management for Claude Code. Provides structured work sessions with time boxing, milestone tracking, and scope management. Use when starting work, checking progress, parking tangents, or ending a session. Accepts subcommands: start, quick, status, end, resume, check, park, log, progress, pulse, scope-expand, sessions, recent, list-parked, downtime, downtime-end, day-start, day-end, day-status, intensity, unpark."
+argument-hint: "[start|quick|status|end|resume|check|park|log|progress|pulse|scope-expand|sessions|recent|list-parked|downtime|downtime-end|day-start|day-end|day-status|intensity|unpark]"
 user-invocable: true
 ---
 
@@ -33,6 +33,13 @@ nilai skills
 | `sessions` | `nilai sessions` | List all sessions |
 | `recent` | `nilai recent` | 7-day session summary |
 | `list-parked` | `nilai list-parked` | Show parked ideas |
+| `downtime` | `nilai downtime [--type break|maintenance|awaiting] [--max-minutes <n>]` | Start a downtime/break session |
+| `downtime-end` | `nilai downtime-end` | End downtime session |
+| `day-start` | `nilai day-start` | Start day tracking |
+| `day-end` | `nilai day-end` | End day tracking and show summary |
+| `day-status` | `nilai day-status` | Show current day progress |
+| `intensity` | `nilai intensity <low|medium|high>` | Change session intensity level |
+| `unpark` | `nilai unpark [<number>]` | List or retrieve parked ideas from LATER.md |
 
 ## Before any work
 
@@ -65,6 +72,7 @@ Ask the user if they want a specific intensity, or default to medium.
 - At every verifiable checkpoint (file created, test passing, function implemented), run `nilai log <milestone>`.
 - If unsure about progress, run `nilai progress`.
 - If the user explicitly expands scope ("I also need to touch X"), run `nilai scope-expand <addition>`. This is distinct from drift — the user is choosing to expand.
+- When looking for the next task after finishing, run `nilai unpark` to see parked ideas.
 
 ## Time awareness
 

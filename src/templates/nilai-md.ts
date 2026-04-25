@@ -2,7 +2,7 @@ export const NILAI_MD = `# Nilai Focus Protocol
 
 You have access to focus management via CLI commands. Run them via Bash. Use them as follows.
 
-Users can also invoke focus operations directly via slash commands: \`/focus\` (umbrella), \`/focus-start\`, \`/focus-quick\`, \`/focus-status\`, \`/focus-end\`, \`/focus-resume\`, \`/focus-check\`, \`/focus-park\`, \`/focus-log\`, \`/focus-progress\`, \`/focus-pulse\`, \`/focus-scope-expand\`, \`/focus-sessions\`, \`/focus-recent\`, \`/focus-list-parked\`.
+Users can also invoke focus operations directly via slash commands: \`/focus\` (umbrella), \`/focus-start\`, \`/focus-quick\`, \`/focus-status\`, \`/focus-end\`, \`/focus-resume\`, \`/focus-check\`, \`/focus-park\`, \`/focus-log\`, \`/focus-progress\`, \`/focus-pulse\`, \`/focus-scope-expand\`, \`/focus-sessions\`, \`/focus-recent\`, \`/focus-list-parked\`, \`/focus-downtime\`, \`/focus-downtime-end\`, \`/focus-day-start\`, \`/focus-day-end\`, \`/focus-day-status\`, \`/focus-intensity\`, \`/focus-unpark\`.
 
 To discover all available commands, run \`nilai skills\`.
 
@@ -37,6 +37,12 @@ Pass \`--intensity low|medium|high\` when running \`nilai start\`. Default is me
 - At every verifiable checkpoint (file created, test passing, function implemented), run \`nilai log "MILESTONE"\`.
 - If unsure about progress, run \`nilai progress\`.
 - If the user explicitly expands scope ("I also need to touch X"), run \`nilai scope-expand "ADDITION"\`. This is distinct from drift — the user is choosing to expand.
+- When looking for the next task after finishing, run \`nilai unpark\` to see parked ideas.
+
+## Intensity changes
+
+- If the user wants to change session intensity mid-session, run \`nilai intensity low|medium|high\`.
+- Default is medium. Switch to high for stricter enforcement, low for more permissive work.
 
 ## Time awareness
 
@@ -59,4 +65,21 @@ Pass \`--intensity low|medium|high\` when running \`nilai start\`. Default is me
 
 - Be matter-of-fact. No motivational language, no ADHD coaching, no celebration.
 - The structure is the intervention. Do not comment on it.
+
+## Downtime sessions
+
+When the user finishes a task but wants to track break time:
+- Run \`nilai downtime --type break|maintenance|awaiting [--max-minutes N]\` to start tracking downtime.
+- During downtime, warn if the user starts editing files.
+- At 80% of max duration, issue a warning.
+- Run \`nilai downtime-end\` to end downtime and show summary.
+
+## Day tracking
+
+For comprehensive day-level accountability:
+- Run \`nilai day-start\` to start day tracking (auto-starts if first session is before 10am).
+- Day tracking categorizes all time: focused work, downtime, and idle gaps.
+- Run \`nilai day-status\` to see current day progress.
+- Run \`nilai day-end\` to end day tracking and see full summary.
+- Days are archived to \`.focus/history/YYYY-MM-DD.json\`.
 `;

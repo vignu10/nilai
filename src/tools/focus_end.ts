@@ -1,6 +1,27 @@
+import type { Session } from "../state/session.js";
 import { readSession, writeSession, deleteSession } from "../state/session.js";
 import { archiveSession } from "../state/history.js";
 import { elapsedMinutes } from "../util/time.js";
+import { addSessionToDay } from "../state/day.js";
+import { addCalibrationRecord } from "../state/calibration.js";
+
+function inferTaskType(task: string): string {
+  const keywords: Record<string, string[]> = {
+    debug: ["fix", "bug", "error", "debug", "broken", "issue", "fails"],
+    code_review: ["review", "refactor", "clean up", "improve", "optimize"],
+    feature: ["add", "implement", "create", "build", "new"],
+    test: ["test", "spec", "coverage", "mock"],
+    docs: ["document", "readme", "comment", "docstring"],
+  };
+
+  const taskLower = task.toLowerCase();
+  for (const [type, words] of Object.entries(keywords)) {
+    if (words.some((w) => taskLower.includes(w))) {
+      return type;
+    }
+  }
+  return "general";
+}
 
 export async function handleFocusEnd(cwd: string): Promise<{
   content: { type: "text"; text: string }[];
@@ -40,6 +61,7 @@ export async function handleFocusEnd(cwd: string): Promise<{
     `Duration: ${elapsed}min (budgeted ${budget}min)`,
     `Milestones: ${session.milestones.length}`,
     `Parked items: ${session.parked_count}`,
+    ...(session.estimated_minutes ? [`Estimation: You said ${session.estimated_minutes}min, took ${elapsed}min (${elapsed > session.estimated_minutes ? "+" : ""}${elapsed - session.estimated_minutes}min)`] : []),
     "",
     "Criteria status:",
     ...criteriaLines,
@@ -55,12 +77,37 @@ export async function handleFocusEnd(cwd: string): Promise<{
       : "(no milestones logged)",
   ].join("\n");
 
+  // Save calibration data if estimate was provided
+  if (session.estimated_minutes) {
+    await addCalibrationRecord(cwd, {
+      session_id: session.id,
+      task: session.task,
+      task_type: inferTaskType(session.task),
+      estimated_minutes: session.estimated_minutes,
+      actual_minutes: elapsed,
+      intensity: session.intensity,
+      completed_criteria: session.milestones.length,
+      total_criteria: session.done_criteria.length,
+      date: new Date().toISOString().slice(0, 10),
+    });
+  }
+
   await writeSession(cwd, session);
   await archiveSession(cwd, session);
+
+  // Add to day tracking if active
+  await addSessionToDay(cwd, session);
+
   await deleteSession(cwd);
 
+  // Prompt for energy level if not provided
+  let extraMessage = "";
+  if (session.energy_start && !session.energy_end) {
+    extraMessage = `\n\nRate your ending energy level (1-5): /focus-energy end <level>`;
+  }
+
   return {
-    content: [{ type: "text", text: retro }],
+    content: [{ type: "text", text: retro + extraMessage }],
   };
 }
 

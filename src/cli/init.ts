@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { ensureFocusDirs } from "../state/paths.js";
 import { NILAI_MD } from "../templates/nilai-md.js";
 import { installSkills } from "./install-skills.js";
+import { initializeDefaultTemplates } from "../state/default-templates.js";
 
 export function runInit(cwd: string): void {
   // Create .focus/ and .focus/history/
@@ -10,7 +11,7 @@ export function runInit(cwd: string): void {
 
   // Update .gitignore
   const gitignorePath = resolve(cwd, ".gitignore");
-  const gitignoreEntries = [".focus/", ".claude/skills/focus*/", "LATER.md"];
+  const gitignoreEntries = [".focus/", ".claude/skills/focus*/", "LATER.md", "CAPTURE.md"];
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, "utf-8");
     const additions = gitignoreEntries.filter((e) => !content.includes(e));
@@ -45,6 +46,10 @@ export function runInit(cwd: string): void {
     writeFileSync(claudePath, reference + "\n", "utf-8");
     console.log("Created CLAUDE.md with @NILAI.md reference");
   }
+
+  // Initialize default templates
+  initializeDefaultTemplates(cwd);
+  console.log("Initialized default templates");
 
   // Install skills to .claude/skills/
   console.log("");

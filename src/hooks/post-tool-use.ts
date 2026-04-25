@@ -20,7 +20,7 @@ export function handlePostToolUse(
     process.exit(0);
   }
 
-  if (!session || session.status !== "active") {
+  if (!session || (session.status !== "active" && session.status !== "downtime")) {
     process.exit(0);
   }
 
@@ -67,6 +67,63 @@ export function handlePostToolUse(
     messages.push(
       `Time check: ${Math.round(elapsed)}min of ${session.time_box_minutes}min elapsed. ${criteriaDone} of ${session.done_criteria.length} criteria done.`,
     );
+  }
+
+  // Downtime coding detection
+  if (session.status === "downtime" && FILE_MUTATING_TOOLS.has(toolName)) {
+    messages.push(
+      "You're editing files during downtime. End downtime with /focus-downtime-end and start a focus session.",
+    );
+  }
+
+  // Downtime max duration warning
+  if (session.status === "downtime" && session.downtime_max_minutes) {
+    const threshold = session.downtime_max_minutes * 0.8;
+    if (elapsed > threshold && !session.downtime_warned_at) {
+      session.downtime_warned_at = new Date().toISOString();
+      snapshotUpdated = true;
+      messages.push(
+        `Downtime warning: ${Math.round(elapsed)}min of ${session.downtime_max_minutes}min elapsed.`,
+      );
+    }
+  }
+
+  // Break reminder checking (only for active sessions)
+  if (session.status === "active" && session.next_break_at) {
+    const now = Date.now();
+    const nextBreak = new Date(session.next_break_at).getTime();
+    const timeSinceBreakPrompt = session.break_prompted_at
+      ? now - new Date(session.break_prompted_at).getTime()
+      : Infinity;
+
+    // Prompt if it's time for a break (2min before until 5min after) and we haven't prompted recently
+    if (now >= nextBreak - 2 * 60_000 && now < nextBreak + 5 * 60_000 && timeSinceBreakPrompt > 10 * 60_000) {
+      const breakType = session.break_type === "pomodoro_25" ? "25min" : "45min";
+      messages.push(
+        `Break time! You've been working for ${Math.round(elapsed)} minutes. Take a break: /focus-break or nilai break`,
+      );
+      session.break_prompted_at = new Date().toISOString();
+      snapshotUpdated = true;
+    }
+  }
+
+  // Stuck detection (only for active sessions with milestones)
+  if (session.status === "active" && session.last_milestone_at) {
+    const now = Date.now();
+    const lastMilestone = new Date(session.last_milestone_at).getTime();
+    const stuckThreshold = 15 * 60_000; // 15 minutes
+    const timeSinceStuckPrompt = session.stuck_prompted_at
+      ? now - new Date(session.stuck_prompted_at).getTime()
+      : Infinity;
+
+    if (now - lastMilestone > stuckThreshold && timeSinceStuckPrompt > 30 * 60_000) {
+      const stuckMinutes = Math.round((now - lastMilestone) / 60_000);
+      messages.push(
+        `No progress for ${stuckMinutes}min. Are you stuck? /focus-stuck investigate|park|split`,
+      );
+      session.stuck_prompted_at = new Date().toISOString();
+      snapshotUpdated = true;
+    }
   }
 
   if (snapshotUpdated) {

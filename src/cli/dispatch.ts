@@ -16,6 +16,19 @@ import { handleFocusQuick } from "../tools/focus_quick.js";
 import { handleFocusSessions } from "../tools/focus_sessions.js";
 import { handleFocusScopeExpand } from "../tools/focus_scope_expand.js";
 import { handleFocusRecent } from "../tools/focus_recent.js";
+import { handleFocusDowntime } from "../tools/focus_downtime.js";
+import { handleFocusDowntimeEnd } from "../tools/focus_downtime_end.js";
+import { handleFocusDayStart } from "../tools/focus_day_start.js";
+import { handleFocusDayEnd } from "../tools/focus_day_end.js";
+import { handleFocusDayStatus } from "../tools/focus_day_status.js";
+import { handleFocusIntensity } from "../tools/focus_intensity.js";
+import { handleFocusUnpark } from "../tools/focus_unpark.js";
+import { handleFocusBreak } from "../tools/focus_break.js";
+import { handleFocusStuck } from "../tools/focus_stuck.js";
+import { handleFocusTemplate } from "../tools/focus_template.js";
+import { handleFocusEnergy } from "../tools/focus_energy.js";
+import { handleFocusCapture } from "../tools/focus_capture.js";
+import { handleFocusCalibration } from "../tools/focus_calibration.js";
 
 const cwd = process.cwd();
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -149,6 +162,121 @@ export async function dispatch(cmd: string): Promise<void> {
     case "skills":
       listSkills();
       break;
+    case "downtime": {
+      const type = flag("type") as "break" | "maintenance" | "awaiting" | undefined;
+      const max = flag("max-minutes");
+      await runTool(
+        handleFocusDowntime(cwd, {
+          ...(type && { type }),
+          ...(max && { max_minutes: parseInt(max, 10) }),
+        }),
+      );
+      break;
+    }
+    case "downtime-end":
+      await runTool(handleFocusDowntimeEnd(cwd));
+      break;
+    case "day-start":
+      await runTool(handleFocusDayStart(cwd));
+      break;
+    case "day-end":
+      await runTool(handleFocusDayEnd(cwd));
+      break;
+    case "day-status":
+      await runTool(handleFocusDayStatus(cwd));
+      break;
+    case "intensity": {
+      const intensity = positional();
+      if (!intensity || !["low", "medium", "high"].includes(intensity)) {
+        console.log("Usage: nilai intensity <low|medium|high>");
+        process.exit(1);
+      }
+      await runTool(
+        handleFocusIntensity(cwd, { intensity: intensity as "low" | "medium" | "high" }),
+      );
+      break;
+    }
+    case "unpark": {
+      const index = positional();
+      await runTool(
+        handleFocusUnpark(cwd, {
+          ...(index && { index: parseInt(index, 10) }),
+        }),
+      );
+      break;
+    }
+    case "break": {
+      const duration = flag("duration-minutes");
+      const type = flag("type") as "pomodoro_25" | "pomodoro_45" | undefined;
+      await runTool(
+        handleFocusBreak(cwd, {
+          ...(duration && { duration_minutes: parseInt(duration, 10) }),
+          ...(type && { type }),
+        }),
+      );
+      break;
+    }
+    case "stuck": {
+      const response = positional();
+      if (!response || !["investigate", "park", "split"].includes(response)) {
+        console.log("Usage: nilai stuck <investigate|park|split>");
+        process.exit(1);
+      }
+      await runTool(
+        handleFocusStuck(cwd, { response: response as "investigate" | "park" | "split" }),
+      );
+      break;
+    }
+    case "template": {
+      const action = positional();
+      const id = flag("id");
+      if (!action || !["list", "create", "use", "delete", "init"].includes(action)) {
+        console.log("Usage: nilai template <list|create|use|delete|init> [--id <template-id>]");
+        process.exit(1);
+      }
+      await runTool(
+        handleFocusTemplate(cwd, {
+          action: action as "list" | "create" | "use" | "delete" | "init",
+          ...(id && { template_id: id }),
+        }),
+      );
+      break;
+    }
+    case "energy": {
+      const action = positional();
+      const level = flag("level");
+      if (!action || !["start", "end", "stats", "recommend"].includes(action)) {
+        console.log("Usage: nilai energy <start|end|stats|recommend> [--level <1-5>]");
+        process.exit(1);
+      }
+      await runTool(
+        handleFocusEnergy(cwd, {
+          action: action as "start" | "end" | "stats" | "recommend",
+          ...(level && { level: parseInt(level, 10) }),
+        }),
+      );
+      break;
+    }
+    case "capture": {
+      const thought = positional();
+      if (!thought) {
+        console.log("Usage: nilai capture <thought>");
+        process.exit(1);
+      }
+      await runTool(handleFocusCapture(cwd, { thought }));
+      break;
+    }
+    case "calibration": {
+      const action = positional();
+      if (!action || !["stats", "suggest"].includes(action)) {
+        console.log("Usage: nilai calibration <stats|suggest>");
+        process.exit(1);
+      }
+      await runTool(
+        handleFocusCalibration(cwd, { action: action as "stats" | "suggest" }),
+      );
+      break;
+    }
     default:
       console.log(`Unknown command: ${cmd}`);
       process.exit(1);
@@ -183,10 +311,10 @@ function listSkills(): void {
 
   for (const entry of entries) {
     const content = readFileSync(resolve(dir, entry, "SKILL.md"), "utf-8");
-    const descMatch = content.match(/^description:\s*"(.+?)"/m);
+    const descMatch = content.match(/^description:\s*"(.+?)"/m) || content.match(/^description:\s*(.+)$/m);
     rows.push({
       name: entry,
-      description: descMatch ? descMatch[1] : "",
+      description: descMatch ? descMatch[1].trim() : "",
     });
   }
 

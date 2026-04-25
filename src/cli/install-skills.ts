@@ -20,6 +20,19 @@ const SKILLS = [
   "focus-sessions",
   "focus-recent",
   "focus-list-parked",
+  "focus-downtime",
+  "focus-downtime-end",
+  "focus-day-start",
+  "focus-day-end",
+  "focus-day-status",
+  "focus-intensity",
+  "focus-unpark",
+  "focus-break",
+  "focus-stuck",
+  "focus-template",
+  "focus-energy",
+  "focus-capture",
+  "focus-calibration",
 ];
 
 export function installSkills(cwd: string): void {

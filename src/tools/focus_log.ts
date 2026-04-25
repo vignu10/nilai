@@ -33,6 +33,9 @@ export async function handleFocusLog(
     text: args.milestone,
   });
 
+  // Update last milestone time for stuck detection
+  session.last_milestone_at = new Date().toISOString();
+
   await writeSession(cwd, session);
 
   return {
