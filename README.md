@@ -156,44 +156,116 @@ This removes:
 You: I need to add retry logic to the login API endpoint
 
 Claude: Let me start a focus session.
-→ focus_start("Add retry logic to login API", ["Login endpoint returns 401 on transient failures", "Retries up to 3 times with exponential backoff", "Tests pass for retry behavior"], 45)
+→ /focus-start
+Session started: "Add retry logic to login API"
+Intensity: medium
+Time box: 45 minutes
+Done criteria: 3
+  - Login endpoint returns 401 on transient failures
+  - Retries up to 3 times with exponential backoff
+  - Tests pass for retry behavior
 
 You: oh also the header color is wrong
 
 Claude: I'll park that.
-→ focus_park("Fix header color")
+→ /focus-park "Fix header color"
+Parked: "Fix header color"
+Parked items this session: 1
+
+[... Claude edits src/api/login.ts, adds retry logic ...]
+
+Claude: → Milestone logged: "Added retry logic to login endpoint"
+Total milestones: 1
+
+[... Claude writes tests, they pass ...]
+
+Claude: → Milestone logged: "Tests pass for retry behavior with exponential backoff"
+Total milestones: 2
 
 You: done
 
 Claude:
-→ focus_end()
+→ /focus-end
 
 Session retro: Add retry logic to login API
 Duration: 32min (budgeted 45min)
-Milestones: 3
+Milestones: 2
 Parked items: 1
 
 Criteria status:
   [x] Login endpoint returns 401 on transient failures
   [x] Retries up to 3 times with exponential backoff
   [x] Tests pass for retry behavior
+
+Milestones:
+  1. Added retry logic to login endpoint
+  2. Tests pass for retry behavior with exponential backoff
 ```
 
 ### Session recovery example
 
 ```
-(You left 47 minutes ago. You start a new Claude Code session.)
+(You left a session active yesterday. Today, you start a new Claude Code session.)
 
-Nilai: Previous session found: "Fix auth redirect" (47min ago).
-Last activity: editing auth.ts (47min ago).
-Resume with focus_resume 20260425-120000 or start fresh with focus_start.
+Nilai (via SessionStart hook): Previous session found: "Fix auth redirect" (14h ago).
+Last activity: editing auth.ts (14h ago).
+Resume with `nilai resume 20260425120000` or start fresh with `nilai start`.
 
-You: resume that
+You: /focus-resume 20260425120000
 
-Claude:
-→ focus_resume("20260425-120000")
-Resuming abandoned session: "Fix auth redirect"
-Last activity: editing auth.ts — adding retry logic
+Resuming abandoned session.
+Resumed: "Fix auth redirect"
+New session ID: 20260426093000
+Previous milestones carried over: 2
+Time box restarted: 45min
+Last activity: editing auth.ts
+```
+
+### Quick session with scope checking
+
+```
+You: Just need to fix the header color quickly
+
+Claude: → /focus-quick "Fix header color" --time 15
+Session started: "Fix header color"
+Intensity: medium
+Time box: 15 minutes
+Done criteria: 3
+  - Header color matches design spec
+  - Color applies in both light and dark themes
+  - No visual regressions on other components
+
+You: Actually, while I'm here, could you refactor the button component too?
+
+Claude: → /focus-check "Refactor button component"
+That action is outside the current scope ("Fix header color").
+I can:
+- Park this idea for later: /focus-park "Refactor button component"
+- End this session and start a new one for the refactor
+
+You: Park it
+
+Claude: → Parked: "Refactor button component"
+Parked items this session: 1
+
+[... Claude fixes header color ...]
+
+Claude: → /focus-end
+Session retro: Fix header color
+Duration: 8min (budgeted 15min)
+Milestones: 1
+Parked items: 1
+
+Criteria status:
+  [x] Header color matches design spec
+  [x] Color applies in both light and dark themes
+  [ ] No visual regressions on other components
+
+Unfinished criteria:
+  - No visual regressions on other components
+
+Milestones:
+  1. Updated header color to match design spec
 ```
 
 ## State
