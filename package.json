@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsdown && node -e \"['cli','server','hook'].forEach(f=>{const p='dist/'+f+'.js';const c=require('fs').readFileSync(p,'utf8');require('fs').writeFileSync(p,'#!/usr/bin/env node\\n'+c)})\"",
+    "build": "tsdown && node -e \"['cli','server','hook'].forEach(f=>{const p='dist/'+f+'.js';const c=require('fs').readFileSync(p,'utf8');require('fs').writeFileSync(p,'#!/usr/bin/env node\\n'+c);require('fs').chmodSync(p,0o755)})\"",
     "setup": "node dist/cli.js setup",
     "dev": "tsx src/server.ts",
     "lint": "tsc --noEmit",
