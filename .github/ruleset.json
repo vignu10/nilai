@@ -1,0 +1,50 @@
+{
+  "rulesets": [
+    {
+      "name": "Branch protection for master",
+      "target": "branch",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "include": [
+            "refs/heads/master"
+          ],
+          "exclude": []
+        }
+      },
+      "rules": [
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "non_fast_forward"
+        },
+        {
+          "type": "pull_request",
+          "parameters": {
+            "dismiss_stale_reviews_on_push": true,
+            "require_code_owner_review": false,
+            "required_approving_review_count": 0,
+            "require_last_push_approval": false
+          }
+        },
+        {
+          "type": "require_status_checks",
+          "parameters": {
+            "strict_required_status_checks_policy": false,
+            "required_status_checks": [
+              {
+                "context": "test",
+                "app_id": null
+              },
+              {
+                "context": "lint-commits",
+                "app_id": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
