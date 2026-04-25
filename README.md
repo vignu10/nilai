@@ -2,7 +2,7 @@
 
 > _Nilai (நிலை, Tamil): state, stability, stance._
 
-ADHD-friendly focus sessions for Claude Code. An MCP server + companion that helps you ship what you intended to.
+ADHD-friendly focus sessions for Claude Code. MCP tools + slash commands that help you ship what you intended to.
 
 ## The problem
 
@@ -18,7 +18,7 @@ One command in your project directory:
 npx @vignu10/nilai setup
 ```
 
-That's it. This registers the MCP server, scaffolds the focus session files, and installs hooks.
+That's it. This registers the MCP server, scaffolds the focus session files, installs hooks, and adds slash commands.
 
 Done. Start a Claude Code session and tell it what you're working on. Nilai handles the rest.
 
@@ -27,7 +27,7 @@ Done. Start a Claude Code session and tell it what you're working on. Nilai hand
 If you prefer step-by-step control:
 
 ```bash
-npx @vignu10/nilai init              # Scaffold focus session files
+npx @vignu10/nilai init              # Scaffold focus session files + slash commands
 claude mcp add nilai -- npx -y -p @vignu10/nilai nilai-mcp   # Register MCP server
 npx @vignu10/nilai install-hooks     # Install hooks (UserPromptSubmit, SessionStart, PostToolUse, Stop)
 ```
@@ -42,9 +42,37 @@ npx @vignu10/nilai install-hooks     # Install hooks (UserPromptSubmit, SessionS
 - **Recovers abandoned sessions** — if you leave and come back, Nilai shows you exactly where you were.
 - **Auto-ends sessions** when you close Claude Code (Stop hook retro).
 
-## How it works
+## Two ways to use it
 
-Nilai gives Claude 14 `focus_*` tools and a companion file (`NILAI.md`) that teaches Claude when to use them:
+### MCP tools (automatic)
+
+Claude automatically calls the `focus_*` MCP tools based on the NILAI.md protocol loaded in your CLAUDE.md. No user action needed — Claude starts sessions, logs milestones, parks tangents, and ends with a retro on its own.
+
+### Slash commands (user-invoked)
+
+15 slash commands are installed to `.claude/skills/` for direct invocation:
+
+| Command | What it does |
+|---------|-------------|
+| `/focus` | Umbrella — accepts subcommands or a task description |
+| `/focus-start` | Start a session with task, criteria, and time box |
+| `/focus-quick` | Quick session with minimal ceremony (25min default) |
+| `/focus-status` | Check current session state |
+| `/focus-end` | End session and generate a retro |
+| `/focus-resume` | Pick up an archived session |
+| `/focus-check` | Ask "is this action in scope?" |
+| `/focus-park` | Park a tangent to `LATER.md` |
+| `/focus-log` | Log a verifiable milestone |
+| `/focus-progress` | Show criteria checklist + milestones |
+| `/focus-pulse` | Check time usage |
+| `/focus-scope-expand` | Deliberately expand scope |
+| `/focus-sessions` | List all sessions for the project |
+| `/focus-recent` | 7-day session history summary |
+| `/focus-list-parked` | Review parked ideas |
+
+## MCP tools reference
+
+Nilai gives Claude 14 `focus_*` tools:
 
 ### Session lifecycle
 
@@ -103,7 +131,9 @@ This removes:
 - `.focus/` directory (all session state)
 - `NILAI.md`
 - `@NILAI.md` reference from `CLAUDE.md`
+- Nilai entries from `.gitignore`
 - Nilai hooks from `.claude/settings.json`
+- Slash commands from `.claude/skills/`
 - MCP server registration (`claude mcp remove nilai`)
 
 ## What `nilai init` does
@@ -111,7 +141,8 @@ This removes:
 - Creates `.focus/` directory (session state, fully gitignored)
 - Creates `NILAI.md` with the focus protocol
 - Creates or updates `CLAUDE.md` with `@NILAI.md` reference
-- Updates `.gitignore` for session state
+- Updates `.gitignore` for session state, skills, and LATER.md
+- Installs 15 slash commands to `.claude/skills/`
 
 ## Example session
 
@@ -168,7 +199,8 @@ project-root/
 ├── .focus/              # all gitignored
 │   ├── session.json    # active session (includes snapshot)
 │   └── history/        # archived sessions (ended + abandoned)
-├── LATER.md            # parked ideas (committed)
+├── .claude/skills/     # slash commands (gitignored)
+├── LATER.md            # parked ideas (gitignored)
 ├── NILAI.md            # focus protocol for Claude
 └── CLAUDE.md           # references @NILAI.md
 ```
@@ -289,7 +321,7 @@ nilai install-hooks
 ```
 src/
   server.ts              # MCP server entry point
-  cli.ts                 # CLI entry (init, install-hooks, uninstall)
+  cli.ts                 # CLI entry (init, install-hooks, setup, update, uninstall)
   hook.ts                # Hook router (dispatches by event type)
   hooks/                 # Hook handlers
     user-prompt-submit.ts
@@ -302,6 +334,11 @@ src/
   util/                  # Time formatting and nudges
   cli/                   # CLI command implementations
   templates/             # NILAI.md template
+source/
+  skills/                # 15 slash command skill definitions
+    focus/SKILL.md       # Umbrella skill
+    focus-start/SKILL.md # Individual skills
+    ...
 ```
 
 ### What to contribute

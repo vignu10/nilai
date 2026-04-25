@@ -9,7 +9,8 @@
     "nilai-mcp-hook": "./dist/hook.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "source/skills"
   ],
   "scripts": {
     "build": "tsdown && node -e \"['cli','server','hook'].forEach(f=>{const p='dist/'+f+'.js';const c=require('fs').readFileSync(p,'utf8');require('fs').writeFileSync(p,'#!/usr/bin/env node\\n'+c);require('fs').chmodSync(p,0o755)})\"",

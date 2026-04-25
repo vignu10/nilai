@@ -7,6 +7,7 @@ import {
 } from "node:fs";
 import { resolve } from "node:path";
 import { execSync } from "node:child_process";
+import { uninstallSkills } from "./install-skills.js";
 
 export function runUninstall(cwd: string): void {
   // Step 1: Remove .focus/ directory
@@ -45,19 +46,21 @@ export function runUninstall(cwd: string): void {
     }
   }
 
-  // Step 4: Remove .focus/session.json from .gitignore
+  // Step 4: Remove Nilai entries from .gitignore
   const gitignorePath = resolve(cwd, ".gitignore");
+  const gitignoreRemovals = [".focus/", ".claude/skills/focus*/", "LATER.md"];
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, "utf-8");
-    if (content.includes(".focus/")) {
+    const hasEntries = gitignoreRemovals.some((e) => content.includes(e));
+    if (hasEntries) {
       const updated = content
         .split("\n")
-        .filter((line) => line.trim() !== ".focus/")
+        .filter((line) => !gitignoreRemovals.includes(line.trim()))
         .join("\n")
         .replace(/\n{3,}/g, "\n\n")
         .trimEnd() + "\n";
       writeFileSync(gitignorePath, updated, "utf-8");
-      console.log("Removed .focus/session.json from .gitignore");
+      console.log("Removed Nilai entries from .gitignore");
     }
   }
 
@@ -92,7 +95,11 @@ export function runUninstall(cwd: string): void {
     }
   }
 
-  // Step 6: Unregister MCP server
+  // Step 6: Remove skill files
+  console.log("");
+  uninstallSkills(cwd);
+
+  // Step 7: Unregister MCP server
   console.log("\nUnregistering MCP server...");
   try {
     execSync("claude mcp remove nilai", { stdio: "inherit" });

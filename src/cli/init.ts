@@ -2,21 +2,23 @@ import { mkdirSync, existsSync, readFileSync, writeFileSync, appendFileSync } fr
 import { resolve } from "node:path";
 import { ensureFocusDirs } from "../state/paths.js";
 import { NILAI_MD } from "../templates/nilai-md.js";
+import { installSkills } from "./install-skills.js";
 
 export function runInit(cwd: string): void {
   // Create .focus/ and .focus/history/
   ensureFocusDirs(cwd);
 
-  // Update .gitignore — add .focus/ if not present
+  // Update .gitignore
   const gitignorePath = resolve(cwd, ".gitignore");
-  const gitignoreEntry = ".focus/";
+  const gitignoreEntries = [".focus/", ".claude/skills/focus*/", "LATER.md"];
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, "utf-8");
-    if (!content.includes(gitignoreEntry)) {
-      appendFileSync(gitignorePath, `\n${gitignoreEntry}\n`, "utf-8");
+    const additions = gitignoreEntries.filter((e) => !content.includes(e));
+    if (additions.length > 0) {
+      appendFileSync(gitignorePath, `\n${additions.join("\n")}\n`, "utf-8");
     }
   } else {
-    writeFileSync(gitignorePath, gitignoreEntry + "\n", "utf-8");
+    writeFileSync(gitignorePath, gitignoreEntries.join("\n") + "\n", "utf-8");
   }
 
   // Write NILAI.md
@@ -43,6 +45,10 @@ export function runInit(cwd: string): void {
     writeFileSync(claudePath, reference + "\n", "utf-8");
     console.log("Created CLAUDE.md with @NILAI.md reference");
   }
+
+  // Install skills to .claude/skills/
+  console.log("");
+  installSkills(cwd);
 
   console.log("\nNilai initialized. Next steps:");
   console.log("  1. claude mcp add nilai -- npx -y -p @vignu10/nilai nilai-mcp");

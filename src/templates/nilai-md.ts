@@ -2,6 +2,8 @@ export const NILAI_MD = `# Nilai Focus Protocol
 
 You have access to focus management tools. Use them as follows.
 
+Users can also invoke focus operations directly via slash commands: \`/focus\` (umbrella), \`/focus-start\`, \`/focus-quick\`, \`/focus-status\`, \`/focus-end\`, \`/focus-resume\`, \`/focus-check\`, \`/focus-park\`, \`/focus-log\`, \`/focus-progress\`, \`/focus-pulse\`, \`/focus-scope-expand\`, \`/focus-sessions\`, \`/focus-recent\`, \`/focus-list-parked\`.
+
 ## Before any work
 
 - Call \`focus_status\`. If no active session, ask the user: "What are you working on? Give me one concrete task, 1-5 done criteria, and a time box in minutes."

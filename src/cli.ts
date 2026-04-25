@@ -2,6 +2,7 @@ import { runInit } from "./cli/init.js";
 import { runInstallHooks } from "./cli/install-hooks.js";
 import { runSetup } from "./cli/setup.js";
 import { runUninstall } from "./cli/uninstall.js";
+import { runUpdate } from "./cli/update.js";
 
 const command = process.argv[2];
 const cwd = process.cwd();
@@ -16,6 +17,9 @@ switch (command) {
   case "setup":
     runSetup(cwd);
     break;
+  case "update":
+    runUpdate(cwd);
+    break;
   case "uninstall":
     runUninstall(cwd);
     break;
@@ -29,6 +33,7 @@ switch (command) {
     console.log(
       "  nilai setup           One-command setup (init + register MCP + hooks)",
     );
+    console.log("  nilai update          Update hooks and NILAI.md to latest version");
     console.log("  nilai uninstall       Remove Nilai from the current project");
     process.exit(1);
 }
