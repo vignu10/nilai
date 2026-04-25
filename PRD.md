@@ -86,6 +86,7 @@ type Session = {
   task: string; // single concrete task
   done_criteria: string[]; // 1-5 verifiable conditions
   time_box_minutes: number; // 5-480
+  intensity: "low" | "medium" | "high"; // ADHD guardrail strength
   started_at: string; // ISO timestamp
   milestones: { at: string; text: string }[];
   parked_count: number;
@@ -98,7 +99,7 @@ type Session = {
 
 | Tool                | Inputs                                  | Effect                                                        |
 | ------------------- | --------------------------------------- | ------------------------------------------------------------- |
-| `focus_start`       | task, done_criteria[], time_box_minutes | Creates session; rejects vague tasks                          |
+| `focus_start`       | task, done_criteria[], time_box_minutes, intensity? | Creates session; rejects vague tasks. `intensity` defaults to `"medium"` |
 | `focus_status`      | —                                       | Returns task, elapsed, milestones, parked count               |
 | `focus_check`       | intended_action                         | Returns task + criteria + judgment instruction for the LLM    |
 | `focus_park`        | idea, why_interesting?                  | Appends to LATER.md, increments parked_count                  |

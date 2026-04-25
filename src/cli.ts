@@ -18,8 +18,12 @@ switch (command) {
   default:
     console.log("Nilai — ADHD-friendly focus sessions for Claude Code\n");
     console.log("Usage:");
-    console.log("  nilai init            Initialize Nilai in the current project");
+    console.log(
+      "  nilai init            Initialize Nilai in the current project",
+    );
     console.log("  nilai install-hooks   Register UserPromptSubmit hook");
-    console.log("  nilai setup           One-command setup (init + register MCP + hooks)");
+    console.log(
+      "  nilai setup           One-command setup (init + register MCP + hooks)",
+    );
     process.exit(1);
 }
