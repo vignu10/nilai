@@ -121,7 +121,7 @@ export async function getSuggestedTimebox(cwd: string, task: string, userEstimat
   }
 
   const taskType = inferTaskType(task);
-  const relevantRecords = records.filter((r) => r.task_type === task_type);
+  const relevantRecords = records.filter((r) => r.task_type === taskType);
 
   if (relevantRecords.length < 2) {
     const avgError = records.reduce((sum, r) => sum + (r.actual_minutes - r.estimated_minutes), 0) / records.length;
@@ -143,7 +143,7 @@ export async function getSuggestedTimebox(cwd: string, task: string, userEstimat
   };
 }
 
-function inferTaskType(task: string): string {
+export function inferTaskType(task: string): string {
   const keywords: Record<string, string[]> = {
     debug: ["fix", "bug", "error", "debug", "broken", "issue", "fails", "crash"],
     code_review: ["review", "refactor", "clean up", "improve", "optimize", "simplify"],

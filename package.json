@@ -16,6 +16,7 @@
     "setup": "node dist/cli.js setup",
     "lint": "tsc --noEmit",
     "test": "vitest run",
+    "commitlint": "commitlint --from HEAD~10 --to HEAD",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {

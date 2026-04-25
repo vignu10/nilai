@@ -42,7 +42,7 @@ export async function handleFocusTemplate(
   }
 }
 
-async function listTemplates(cwd: string) {
+async function listTemplates(cwd: string): Promise<{ content: { type: "text"; text: string }[] }> {
   const templates = await readTemplates(cwd);
   if (templates.length === 0) {
     return {
@@ -60,7 +60,7 @@ async function listTemplates(cwd: string) {
   return { content: [{ type: "text", text: "Templates:\n" + lines.join("\n\n") }] };
 }
 
-async function createTemplate(cwd: string, template: SessionTemplate) {
+async function createTemplate(cwd: string, template: SessionTemplate): Promise<{ content: { type: "text"; text: string }[] }> {
   await saveTemplate(cwd, template);
   return {
     content: [{
@@ -70,7 +70,7 @@ async function createTemplate(cwd: string, template: SessionTemplate) {
   };
 }
 
-async function useTemplate(cwd: string, templateId: string) {
+async function useTemplate(cwd: string, templateId: string): Promise<{ content: { type: "text"; text: string }[] }> {
   const template = await getTemplate(cwd, templateId);
   if (!template) {
     return { content: [{ type: "text", text: "Template not found." }] };
