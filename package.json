@@ -1,0 +1,42 @@
+{
+  "name": "nilai",
+  "version": "0.1.0",
+  "description": "ADHD-friendly focus sessions for Claude Code via MCP",
+  "type": "module",
+  "bin": {
+    "nilai": "./dist/cli.js",
+    "nilai-mcp": "./dist/server.js",
+    "nilai-mcp-hook": "./dist/hook.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsx src/server.ts",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsdown": "^0.12.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "adhd",
+    "focus",
+    "claude-code"
+  ],
+  "license": "MIT"
+}
