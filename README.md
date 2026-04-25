@@ -135,7 +135,61 @@ project-root/
 
 The opinions are the product.
 
-## Contributing
+## Troubleshooting
+
+### MCP error: Connection closed
+
+The MCP server crashed or couldn't start. Fix:
+
+```bash
+# Check if the server starts
+claude mcp list
+
+# If failed, remove and re-register
+claude mcp remove nilai
+claude mcp add nilai -- npx -y @vignu10/nilai-mcp
+
+# Then restart your Claude Code session
+```
+
+If it still fails, test the server directly:
+
+```bash
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' | npx -y @vignu10/nilai-mcp
+```
+
+If you see a JSON response, the server works — the issue is your Claude Code registration. If it errors, check your Node.js version (`node >= 20`).
+
+### Permission denied when running npx
+
+```bash
+# Clear npx cache and retry
+npx clear-npx-cache
+npx @vignu10/nilai setup
+```
+
+### Tools not showing up in Claude Code
+
+The MCP server needs to be registered before starting a Claude Code session. If you registered it mid-session:
+
+1. Exit the session (`/exit` or Ctrl+C)
+2. Start a new session — tools load on session start
+
+### Claude ignores the focus tools
+
+Make sure `NILAI.md` exists in your project root and `CLAUDE.md` references it with `@NILAI.md`. Run `npx @vignu10/nilai init` to set this up.
+
+### Session state stuck / corrupted
+
+Delete the session file to start fresh:
+
+```bash
+rm .focus/session.json
+```
+
+Archived sessions in `.focus/history/` are safe to keep or delete.
+
+### Contributing
 
 Contributions are welcome. To get started:
 
