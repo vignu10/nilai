@@ -44,7 +44,7 @@ Nilai gives Claude 10 `focus_*` tools and a companion file (`NILAI.md`) that tea
 
 | Tool | What it does |
 |------|-------------|
-| `focus_start` | Start a session — rejects vague tasks like "improve the codebase" |
+| `focus_start` | Start a session — rejects vague tasks. Supports intensity levels: `low` (permissive), `medium` (default), `high` (strict blocks) |
 | `focus_status` | Check current session state |
 | `focus_check` | Ask "is this action in scope?" before acting |
 | `focus_park` | Park a tangent to `LATER.md` instead of chasing it |
@@ -54,6 +54,18 @@ Nilai gives Claude 10 `focus_*` tools and a companion file (`NILAI.md`) that tea
 | `focus_end` | End session and generate a retro |
 | `focus_resume` | Pick up an archived session |
 | `focus_list_parked` | Review parked ideas |
+
+## Intensity levels
+
+Every session has an intensity that controls how aggressive the ADHD guardrails are:
+
+| Level | Scope checking | Time nudges | Use when |
+|-------|---------------|-------------|----------|
+| `low` | Soft-suggests parking, no pressure | Only when way over budget | Exploring, brainstorming |
+| `medium` | Proposes parking for tangents (default) | Warns at 10% remaining, stalling at 30% | Normal focused work |
+| `high` | Refuses off-scope actions entirely | Warns at 25% remaining, stalling at 15% | Deadline-driven, high-stakes |
+
+Tell Claude the intensity when starting: "Start a high-intensity session for..."
 
 ## What `nilai init` does
 
