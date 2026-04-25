@@ -10,6 +10,10 @@ import { handleFocusPulse } from "./focus_pulse.js";
 import { handleFocusEnd } from "./focus_end.js";
 import { handleFocusResume } from "./focus_resume.js";
 import { handleFocusListParked } from "./focus_list_parked.js";
+import { handleFocusQuick } from "./focus_quick.js";
+import { handleFocusSessions } from "./focus_sessions.js";
+import { handleFocusScopeExpand } from "./focus_scope_expand.js";
+import { handleFocusRecent } from "./focus_recent.js";
 
 const cwd = process.cwd();
 
@@ -96,5 +100,39 @@ export function registerAllTools(server: McpServer): void {
     "Returns all parked ideas from LATER.md. Use when the user wants to review parked items.",
     {},
     async () => handleFocusListParked(cwd),
+  );
+
+  server.tool(
+    "focus_quick",
+    "Start a quick focus session with minimal ceremony. Prompts for task only, defaults timebox to 25min, auto-generates simple done_criteria. Use when the user gives a task but resists specifying done_criteria, or the task is small enough that full focus_start ceremony is overhead.",
+    {
+      task: z.string().describe("What the user is working on. At least a few words."),
+      time_box_minutes: z.number().int().min(5).max(480).optional().describe("Time budget in minutes. Defaults to 25."),
+    },
+    async (args) => handleFocusQuick(cwd, args),
+  );
+
+  server.tool(
+    "focus_sessions",
+    "List all sessions for the current project: active, completed, and abandoned. Use when the user seems confused about what's running or asks 'what am I working on?'.",
+    {},
+    async () => handleFocusSessions(cwd),
+  );
+
+  server.tool(
+    "focus_scope_expand",
+    "Deliberately expand the scope of the current session. Use when the user explicitly says they need to do more ('I also need to touch the middleware'). Records the scope change and optionally extends the timebox. Distinct from drift — the user is choosing to expand.",
+    {
+      addition: z.string().describe("What's being added to the scope."),
+      extra_minutes: z.number().int().min(0).max(240).optional().describe("Extra time to add to the timebox. 0 if not extending."),
+    },
+    async (args) => handleFocusScopeExpand(cwd, args),
+  );
+
+  server.tool(
+    "focus_recent",
+    "Aggregates session history for the last 7 days: completed vs abandoned, time spent, and session summaries. Use when the user asks 'what did I ship this week?' or similar.",
+    {},
+    async () => handleFocusRecent(cwd),
   );
 }

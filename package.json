@@ -1,6 +1,6 @@
 {
   "name": "@vignu10/nilai",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "ADHD-friendly focus sessions for Claude Code via MCP",
   "type": "module",
   "bin": {

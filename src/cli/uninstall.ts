@@ -65,7 +65,7 @@ export function runUninstall(cwd: string): void {
   const settingsPath = resolve(cwd, ".claude", "settings.json");
   if (existsSync(settingsPath)) {
     const settings = JSON.parse(readFileSync(settingsPath, "utf-8"));
-    const events = ["UserPromptSubmit", "SessionStart", "PostToolUse"];
+    const events = ["UserPromptSubmit", "SessionStart", "PostToolUse", "Stop"];
     let removed = false;
 
     for (const event of events) {

@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 const HOOK_COMMAND = "npx -y -p @vignu10/nilai nilai-mcp-hook";
 
-const EVENTS = ["UserPromptSubmit", "SessionStart", "PostToolUse"] as const;
+const EVENTS = ["UserPromptSubmit", "SessionStart", "PostToolUse", "Stop"] as const;
 
 export function runInstallHooks(cwd: string): void {
   const settingsDir = resolve(cwd, ".claude");

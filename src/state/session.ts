@@ -20,6 +20,7 @@ export type Session = {
   snapshot?: Snapshot;
   abandoned_at?: string;
   abandonment_reason?: "idle" | "user_ended" | "replaced";
+  scope_expansions?: { at: string; description: string; new_timebox?: number }[];
 };
 
 import { readFile, writeFile, unlink } from "node:fs/promises";

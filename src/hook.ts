@@ -1,6 +1,7 @@
 import { handleUserPromptSubmit } from "./hooks/user-prompt-submit.js";
 import { handleSessionStart } from "./hooks/session-start.js";
 import { handlePostToolUse } from "./hooks/post-tool-use.js";
+import { handleStop } from "./hooks/stop.js";
 
 async function main(): Promise<void> {
   const cwd = process.cwd();
@@ -23,11 +24,14 @@ async function main(): Promise<void> {
   }
 
   const cwdOverride = (input.cwd as string) ?? cwd;
+  const eventName = (input.hookEventName as string) ?? "";
 
-  // Detect event from input shape
-  if ("tool_name" in input || "tool_input" in input) {
+  // Detect event from input shape or explicit event name
+  if (eventName === "Stop" || eventName === "stop") {
+    handleStop(cwdOverride);
+  } else if ("tool_name" in input || "tool_input" in input || eventName === "PostToolUse") {
     handlePostToolUse(cwdOverride, input as { tool_name?: string; tool_input?: Record<string, unknown> });
-  } else if ("matcher" in input || "hookEventName" in input) {
+  } else if ("matcher" in input || eventName === "SessionStart") {
     handleSessionStart(cwdOverride);
   } else {
     // Default: UserPromptSubmit (original behavior)
