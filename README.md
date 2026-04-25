@@ -82,7 +82,7 @@ This removes:
 
 ## What `nilai init` does
 
-- Creates `.focus/` directory (session state, gitignored)
+- Creates `.focus/` directory (session state, fully gitignored)
 - Creates `NILAI.md` with the focus protocol
 - Creates or updates `CLAUDE.md` with `@NILAI.md` reference
 - Updates `.gitignore` for session state
@@ -122,8 +122,8 @@ Everything lives in your repo. No cloud, no accounts, no telemetry.
 
 ```
 project-root/
-├── .focus/
-│   ├── session.json    # active session (gitignored)
+├── .focus/              # all gitignored
+│   ├── session.json    # active session
 │   └── history/        # archived sessions
 ├── LATER.md            # parked ideas (committed)
 ├── NILAI.md            # focus protocol for Claude

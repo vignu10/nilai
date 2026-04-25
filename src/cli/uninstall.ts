@@ -49,10 +49,10 @@ export function runUninstall(cwd: string): void {
   const gitignorePath = resolve(cwd, ".gitignore");
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, "utf-8");
-    if (content.includes(".focus/session.json")) {
+    if (content.includes(".focus/")) {
       const updated = content
         .split("\n")
-        .filter((line) => line.trim() !== ".focus/session.json")
+        .filter((line) => line.trim() !== ".focus/")
         .join("\n")
         .replace(/\n{3,}/g, "\n\n")
         .trimEnd() + "\n";

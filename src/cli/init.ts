@@ -7,15 +7,9 @@ export function runInit(cwd: string): void {
   // Create .focus/ and .focus/history/
   ensureFocusDirs(cwd);
 
-  // Write .focus/.gitkeep to track the directory
-  const gitkeep = resolve(cwd, ".focus", ".gitkeep");
-  if (!existsSync(gitkeep)) {
-    writeFileSync(gitkeep, "", "utf-8");
-  }
-
-  // Update .gitignore — add .focus/session.json if not present
+  // Update .gitignore — add .focus/ if not present
   const gitignorePath = resolve(cwd, ".gitignore");
-  const gitignoreEntry = ".focus/session.json";
+  const gitignoreEntry = ".focus/";
   if (existsSync(gitignorePath)) {
     const content = readFileSync(gitignorePath, "utf-8");
     if (!content.includes(gitignoreEntry)) {
