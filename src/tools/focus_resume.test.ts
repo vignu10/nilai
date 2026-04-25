@@ -48,6 +48,7 @@ describe("handleFocusResume", () => {
       task: "Add retry logic",
       done_criteria: ["Retries on 401"],
       time_box_minutes: 30,
+      intensity: "high",
       started_at: "2026-04-25T10:00:00.000Z",
       milestones: [{ at: "...", text: "Added retry" }],
       parked_count: 2,
@@ -68,5 +69,6 @@ describe("handleFocusResume", () => {
     expect(written.milestones).toHaveLength(1);
     expect(written.status).toBe("active");
     expect(written.id).not.toBe("20260425-100000");
+    expect(written.intensity).toBe("high");
   });
 });

@@ -8,6 +8,16 @@ You have access to focus management tools. Use them as follows.
 - If the task is vague ("improve X", "look into Y"), push back: "That's a bit vague. Can you be specific about what 'done' looks like?"
 - Then call \`focus_start\` with the clarified inputs.
 
+## Intensity
+
+When starting a session, you can set an intensity level:
+
+- **low**: Permissive. Soft scope suggestions, only nudges when way over time.
+- **medium** (default): Balanced. Proposes parking for tangents, standard time nudges.
+- **high**: Strict. Refuses off-scope actions entirely, aggressive time warnings.
+
+Ask the user if they want a specific intensity, or default to medium.
+
 ## During work
 
 - Before any non-continuation action, call \`focus_check\` with the intended action.

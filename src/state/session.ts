@@ -3,6 +3,7 @@ export type Session = {
   task: string;
   done_criteria: string[];
   time_box_minutes: number;
+  intensity: "low" | "medium" | "high";
   started_at: string;
   milestones: { at: string; text: string }[];
   parked_count: number;

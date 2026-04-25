@@ -18,6 +18,7 @@ export async function handleFocusPulse(cwd: string): Promise<{
     session.started_at,
     session.time_box_minutes,
     session.milestones.length,
+    session.intensity ?? "medium",
   );
 
   return {

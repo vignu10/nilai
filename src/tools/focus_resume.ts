@@ -40,6 +40,7 @@ export async function handleFocusResume(
     task: old.task,
     done_criteria: old.done_criteria,
     time_box_minutes: old.time_box_minutes,
+    intensity: old.intensity ?? "medium",
     started_at: now.toISOString(),
     milestones: old.milestones,
     parked_count: old.parked_count,

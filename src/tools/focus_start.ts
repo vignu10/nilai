@@ -4,7 +4,7 @@ import { isVagueTask } from "../validation/vague.js";
 
 export async function handleFocusStart(
   cwd: string,
-  args: { task: string; done_criteria: string[]; time_box_minutes: number },
+  args: { task: string; done_criteria: string[]; time_box_minutes: number; intensity?: "low" | "medium" | "high" },
 ): Promise<{ content: { type: "text"; text: string }[]; isError?: boolean }> {
   const existing = await readSession(cwd);
   if (existing && existing.status === "active") {
@@ -55,6 +55,7 @@ export async function handleFocusStart(
     task: args.task,
     done_criteria: args.done_criteria,
     time_box_minutes: args.time_box_minutes,
+    intensity: args.intensity ?? "medium",
     started_at: now.toISOString(),
     milestones: [],
     parked_count: 0,
@@ -67,7 +68,7 @@ export async function handleFocusStart(
     content: [
       {
         type: "text",
-        text: `Session started: "${args.task}"\nTime box: ${args.time_box_minutes} minutes\nDone criteria: ${args.done_criteria.length}\n  ${args.done_criteria.map((c) => `- ${c}`).join("\n  ")}`,
+        text: `Session started: "${args.task}"\nIntensity: ${session.intensity}\nTime box: ${args.time_box_minutes} minutes\nDone criteria: ${args.done_criteria.length}\n  ${args.done_criteria.map((c) => `- ${c}`).join("\n  ")}`,
       },
     ],
   };

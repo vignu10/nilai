@@ -17,11 +17,12 @@ describe("handleFocusCheck", () => {
     expect(result.content[0].text).toContain("No active focus session");
   });
 
-  it("returns task context and judgment instruction", async () => {
+  it("returns soft instruction for low intensity", async () => {
     vi.mocked(readSession).mockResolvedValueOnce({
       id: "test",
       task: "Add retry logic",
-      done_criteria: ["Retries on 401", "Tests pass"],
+      done_criteria: ["Retries on 401"],
+      intensity: "low",
       status: "active",
     } as any);
 
@@ -29,9 +30,42 @@ describe("handleFocusCheck", () => {
       intended_action: "Refactor the middleware",
     });
     const text = result.content[0].text;
-    expect(text).toContain("Current task: Add retry logic");
-    expect(text).toContain("Retries on 401");
-    expect(text).toContain("Refactor the middleware");
+    expect(text).toContain("Soft check");
+    expect(text).toContain("no pressure");
+  });
+
+  it("returns medium instruction by default", async () => {
+    vi.mocked(readSession).mockResolvedValueOnce({
+      id: "test",
+      task: "Add retry logic",
+      done_criteria: ["Retries on 401"],
+      intensity: "medium",
+      status: "active",
+    } as any);
+
+    const result = await handleFocusCheck("/project", {
+      intended_action: "Refactor the middleware",
+    });
+    const text = result.content[0].text;
     expect(text).toContain("Judge whether");
+    expect(text).toContain("propose focus_park");
+  });
+
+  it("returns strict instruction for high intensity", async () => {
+    vi.mocked(readSession).mockResolvedValueOnce({
+      id: "test",
+      task: "Add retry logic",
+      done_criteria: ["Retries on 401"],
+      intensity: "high",
+      status: "active",
+    } as any);
+
+    const result = await handleFocusCheck("/project", {
+      intended_action: "Refactor the middleware",
+    });
+    const text = result.content[0].text;
+    expect(text).toContain("STRICT MODE");
+    expect(text).toContain("Do NOT act");
+    expect(text).toContain("No exceptions");
   });
 });

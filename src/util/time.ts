@@ -17,24 +17,32 @@ export function elapsedMinutes(startedAt: string): number {
   return Math.round(ms / 60_000);
 }
 
+export type Intensity = "low" | "medium" | "high";
+
 export function getNudge(
   startedAt: string,
   timeBoxMinutes: number,
   milestoneCount: number,
+  intensity: Intensity = "medium",
 ): string {
   const elapsed = elapsedMinutes(startedAt);
   const remaining = formatRemaining(startedAt, timeBoxMinutes);
+  const over = elapsed - timeBoxMinutes;
 
-  if (elapsed > timeBoxMinutes) {
-    const over = elapsed - timeBoxMinutes;
+  if (over > 0) {
+    if (intensity === "low" && over <= timeBoxMinutes * 0.5) {
+      return `${elapsed} of ${timeBoxMinutes} minutes used. ${milestoneCount} milestone${milestoneCount !== 1 ? "s" : ""} logged.`;
+    }
     return `Session is ${over} minute${over !== 1 ? "s" : ""} over the ${timeBoxMinutes}min time box. Consider calling focus_end.`;
   }
 
-  if (remaining <= timeBoxMinutes * 0.1) {
+  const nearThreshold = intensity === "high" ? 0.25 : 0.1;
+  if (remaining <= timeBoxMinutes * nearThreshold) {
     return `Approaching time box limit. ${remaining} minute${remaining !== 1 ? "s" : ""} remaining.`;
   }
 
-  if (milestoneCount === 0 && elapsed > timeBoxMinutes * 0.3) {
+  const stallThreshold = intensity === "low" ? 0.5 : intensity === "high" ? 0.15 : 0.3;
+  if (milestoneCount === 0 && elapsed > timeBoxMinutes * stallThreshold) {
     return `${elapsed} of ${timeBoxMinutes} minutes used with no milestones logged. Are you on track?`;
   }
 

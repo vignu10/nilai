@@ -1,4 +1,12 @@
-import { readSession, assertActive } from "../state/session.js";
+import { readSession } from "../state/session.js";
+
+const INSTRUCTIONS: Record<string, string> = {
+  low: "Soft check: This may be tangential. Park it if it's not closely related, but no pressure.",
+  medium:
+    "Judge whether this action advances the task toward the criteria. If not, propose focus_park instead of acting.",
+  high:
+    "STRICT MODE: Do NOT act unless this directly advances a done criterion. If tangential, you MUST call focus_park and not proceed. No exceptions.",
+};
 
 export async function handleFocusCheck(
   cwd: string,
@@ -16,6 +24,8 @@ export async function handleFocusCheck(
     };
   }
 
+  const intensity = session.intensity ?? "medium";
+
   return {
     content: [
       {
@@ -28,7 +38,7 @@ export async function handleFocusCheck(
           "",
           `User intends to: ${args.intended_action}`,
           "",
-          "Judge whether this action advances the task toward the criteria. If not, propose focus_park instead of acting.",
+          INSTRUCTIONS[intensity],
         ].join("\n"),
       },
     ],

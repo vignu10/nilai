@@ -21,6 +21,7 @@ export function registerAllTools(server: McpServer): void {
       task: z.string().describe("One concrete task. Must be specific — not 'improve X' or 'explore Y'."),
       done_criteria: z.array(z.string()).min(1).max(5).describe("1-5 verifiable conditions. Each must describe an observable outcome."),
       time_box_minutes: z.number().int().min(5).max(480).describe("Time budget in minutes. 5-480."),
+      intensity: z.enum(["low", "medium", "high"]).optional().describe("ADHD guardrail strength. low=permissive, medium=default, high=strict blocks. Defaults to medium."),
     },
     async (args) => handleFocusStart(cwd, args),
   );

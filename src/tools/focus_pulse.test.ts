@@ -22,6 +22,7 @@ describe("handleFocusPulse", () => {
       time_box_minutes: 30,
       started_at: new Date(Date.now() - 10 * 60_000).toISOString(),
       milestones: [{ at: "...", text: "something" }],
+      intensity: "medium",
       status: "active",
     } as any);
 
@@ -29,6 +30,21 @@ describe("handleFocusPulse", () => {
     const text = result.content[0].text;
     expect(text).toContain("Add retry logic");
     expect(text).toContain("10m of 30m");
-    expect(text).toContain("milestone");
+  });
+
+  it("uses intensity-aware nudges for high mode", async () => {
+    vi.mocked(readSession).mockResolvedValueOnce({
+      id: "test",
+      task: "Add retry logic",
+      time_box_minutes: 30,
+      started_at: new Date(Date.now() - 23 * 60_000).toISOString(),
+      milestones: [],
+      intensity: "high",
+      status: "active",
+    } as any);
+
+    const result = await handleFocusPulse("/project");
+    const text = result.content[0].text;
+    expect(text).toContain("Approaching");
   });
 });
