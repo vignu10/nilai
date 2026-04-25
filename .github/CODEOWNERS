@@ -1,0 +1,10 @@
+# Codeowners for @vignu10/nilai
+
+# Default codeowner for the entire repo
+* @vignu10
+
+# Specific areas (add collaborators as needed)
+*.md @vignu10
+src/ @vignu10
+source/ @vignu10
+.github/ @vignu10

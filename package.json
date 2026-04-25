@@ -19,6 +19,8 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
     "@types/node": "^22.0.0",
     "tsdown": "^0.12.0",
     "tsx": "^4.19.0",

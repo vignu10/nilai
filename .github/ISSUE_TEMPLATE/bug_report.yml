@@ -1,0 +1,78 @@
+name: Bug report
+description: Report a problem with Nilai
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out a bug report!
+
+  - type: input
+    id: nilaiver
+    attributes:
+      label: Nilai version
+      description: What version of Nilai are you using?
+      placeholder: "0.4.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installmethod
+    attributes:
+      label: Installation method
+      description: How did you install Nilai?
+      options:
+        - npx @vignu10/nilai
+        - npm install -g @vignu10/nilai
+        - Built from source
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Run 'nilai start "test"'
+        2. Run 'nilai status'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened (include error messages, logs)
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node version, Claude Code version
+      placeholder: |
+        OS: Linux
+        Node: v20.0.0
+        Claude Code: 1.2.3
+    validations:
+      required: false

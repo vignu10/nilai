@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # Dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+    ignore:
+      # Ignore major version updates for now
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
