@@ -6,14 +6,11 @@ user-invocable: true
 
 Check the current focus session status.
 
-Call the `focus_status` MCP tool. It returns:
-- Task description
-- Intensity level
-- Elapsed time vs time box budget
-- Last activity snapshot (if any)
-- Milestone count
-- Parked item count
-- Done criteria list
+Run via Bash:
+
+```bash
+nilai status
+```
 
 Present the output as-is. No editorializing.
 

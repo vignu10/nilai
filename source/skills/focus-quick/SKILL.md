@@ -9,9 +9,13 @@ Start a quick focus session with minimal ceremony. Use `$ARGUMENTS` as the task 
 
 The task must be at least a few words — push back if it's too short.
 
-Then call the `focus_quick` MCP tool with:
-- `task`: the task string
-- `time_box_minutes`: optional, defaults to 25
+Then run via Bash:
+
+```bash
+nilai quick "TASK"
+```
+
+Optional: append `--time <minutes>` to override the default 25-minute timebox.
 
 Quick sessions auto-generate two done criteria:
 1. "{task} — the core change works"

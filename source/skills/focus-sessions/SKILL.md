@@ -6,9 +6,10 @@ user-invocable: true
 
 List all focus sessions for the current project.
 
-Call the `focus_sessions` MCP tool. It returns:
-- Active session details (if any): task, start time, time box, milestones, last activity
-- Completed sessions: up to 5 most recent
-- Abandoned sessions: up to 5 most recent
+Run via Bash:
+
+```bash
+nilai sessions
+```
 
 Present the output as-is. If the user wants to resume a session, use `/focus-resume <session-id>`.

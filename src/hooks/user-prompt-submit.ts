@@ -24,7 +24,7 @@ export function handleUserPromptSubmit(cwd: string): void {
     const output = {
       hookSpecificOutput: {
         hookEventName: "UserPromptSubmit",
-        additionalContext: `Previous session expired: "${session.task}" was abandoned after ${Math.round(idleMinutes)}min of inactivity. Call focus_status to check, or start fresh with focus_start.`,
+        additionalContext: `Previous session expired: "${session.task}" was abandoned after ${Math.round(idleMinutes)}min of inactivity. Run \`nilai status\` to check, or start fresh with \`nilai start\`.`,
       },
     };
     process.stdout.write(JSON.stringify(output));

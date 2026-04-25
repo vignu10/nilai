@@ -6,6 +6,10 @@ user-invocable: true
 
 Show all parked ideas from LATER.md.
 
-Call the `focus_list_parked` MCP tool. It returns the full contents of LATER.md, which contains ideas parked during focus sessions.
+Run via Bash:
+
+```bash
+nilai list-parked
+```
 
 Present the output as-is. If no ideas are parked yet, report that.

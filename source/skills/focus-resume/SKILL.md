@@ -7,10 +7,13 @@ user-invocable: true
 
 Resume a previously archived focus session.
 
-If `$ARGUMENTS` contains a session ID (YYYYMMDD-HHMMSS format), use it directly. Otherwise, call `focus_sessions` to list available sessions and ask the user which one to resume.
+If `$ARGUMENTS` contains a session ID (YYYYMMDD-HHMMSS format), use it directly. Otherwise, run `nilai sessions` to list available sessions and ask the user which one to resume.
 
-Call the `focus_resume` MCP tool with:
-- `session_id`: the ID of the archived session
+Run via Bash:
+
+```bash
+nilai resume SESSION_ID
+```
 
 The resumed session carries over:
 - Previous milestones

@@ -14,11 +14,11 @@ Ask the user for anything not provided:
 3. **Time box**: Minutes (5-480). Default to 25 if unsure.
 4. **Intensity** (optional): `low` (permissive), `medium` (default, balanced), or `high` (strict).
 
-Then call the `focus_start` MCP tool with:
-- `task`: the task string
-- `done_criteria`: array of criteria strings
-- `time_box_minutes`: the time budget
-- `intensity`: the chosen level (or omit for medium default)
+Then run via Bash:
+
+```bash
+nilai start "TASK" --criteria "C1" "C2" "C3" --time 30 --intensity medium
+```
 
 If the user resists specifying done criteria, suggest `/focus-quick` instead.
 

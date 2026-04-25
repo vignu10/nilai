@@ -9,11 +9,10 @@ Expand the scope of the current focus session.
 
 Use `$ARGUMENTS` as the scope addition. Ask if they want extra time added to the timebox.
 
-Call the `focus_scope_expand` MCP tool with:
-- `addition`: what's being added to the scope
-- `extra_minutes`: optional extra time to add (0-240)
+Run via Bash:
 
-This is distinct from scope drift — the user is deliberately choosing to expand. The tool:
-- Updates the task description to include the addition
-- Optionally extends the timebox
-- Adds a new done criterion if there's room (max 5)
+```bash
+nilai scope-expand "ADDITION" --extra-minutes 30
+```
+
+The `--extra-minutes` flag is optional (0-240). This is distinct from scope drift — the user is deliberately choosing to expand.

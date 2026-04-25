@@ -31,7 +31,7 @@ export function handleSessionStart(cwd: string): void {
     message += ` Last activity: ${session.snapshot.last_action} (${snapshotAge}min ago).`;
   }
 
-  message += ` Resume with focus_resume ${session.id} or start fresh with focus_start.`;
+  message += ` Resume with \`nilai resume ${session.id}\` or start fresh with \`nilai start\`.`;
 
   const output = {
     hookSpecificOutput: {

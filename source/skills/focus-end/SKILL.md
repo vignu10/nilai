@@ -6,11 +6,11 @@ user-invocable: true
 
 End the current focus session and generate a retrospective.
 
-Call the `focus_end` MCP tool. It produces a retro including:
-- Duration vs budgeted time
-- Criteria status (checked off if milestones overlap)
-- All logged milestones
-- Parked item count
+Run via Bash:
+
+```bash
+nilai end
+```
 
 Present the retro output as-is. No celebration, no coaching, no editorializing.
 

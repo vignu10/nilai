@@ -6,7 +6,6 @@ import {
   unlinkSync,
 } from "node:fs";
 import { resolve } from "node:path";
-import { execSync } from "node:child_process";
 import { uninstallSkills } from "./install-skills.js";
 
 export function runUninstall(cwd: string): void {
@@ -77,7 +76,7 @@ export function runUninstall(cwd: string): void {
         const filtered = entries.filter(
           (entry: Record<string, unknown>) =>
             !(entry.hooks as Array<Record<string, string>>)?.some(
-              (h) => h.command?.includes("nilai-mcp-hook"),
+              (h) => h.command?.includes("nilai-hook"),
             ),
         );
         if (filtered.length !== entries.length) {
@@ -98,16 +97,6 @@ export function runUninstall(cwd: string): void {
   // Step 6: Remove skill files
   console.log("");
   uninstallSkills(cwd);
-
-  // Step 7: Unregister MCP server
-  console.log("\nUnregistering MCP server...");
-  try {
-    execSync("claude mcp remove nilai", { stdio: "inherit" });
-    console.log("MCP server removed.");
-  } catch {
-    console.log("Could not remove MCP server. Run manually:");
-    console.log("  claude mcp remove nilai");
-  }
 
   console.log("\nNilai has been uninstalled.");
 }

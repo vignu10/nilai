@@ -1,28 +1,22 @@
 {
   "name": "@vignu10/nilai",
-  "version": "0.3.1",
-  "description": "ADHD-friendly focus sessions for Claude Code via MCP",
+  "version": "0.4.0",
+  "description": "ADHD-friendly focus sessions for Claude Code via CLI skills",
   "type": "module",
   "bin": {
     "nilai": "./dist/cli.js",
-    "nilai-mcp": "./dist/server.js",
-    "nilai-mcp-hook": "./dist/hook.js"
+    "nilai-hook": "./dist/hook.js"
   },
   "files": [
     "dist",
     "source/skills"
   ],
   "scripts": {
-    "build": "tsdown && node -e \"['cli','server','hook'].forEach(f=>{const p='dist/'+f+'.js';const c=require('fs').readFileSync(p,'utf8');require('fs').writeFileSync(p,'#!/usr/bin/env node\\n'+c);require('fs').chmodSync(p,0o755)})\"",
+    "build": "tsdown && node -e \"['cli','hook'].forEach(f=>{const p='dist/'+f+'.js';const c=require('fs').readFileSync(p,'utf8');require('fs').writeFileSync(p,'#!/usr/bin/env node\\n'+c);require('fs').chmodSync(p,0o755)})\"",
     "setup": "node dist/cli.js setup",
-    "dev": "tsx src/server.ts",
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "prepublishOnly": "npm run build"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
-    "zod": "^3.25.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -35,7 +29,7 @@
     "node": ">=20"
   },
   "keywords": [
-    "mcp",
+    "skills",
     "adhd",
     "focus",
     "claude-code"

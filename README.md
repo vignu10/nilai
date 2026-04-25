@@ -2,7 +2,7 @@
 
 > _Nilai (நிலை, Tamil): state, stability, stance._
 
-ADHD-friendly focus sessions for Claude Code. MCP tools + slash commands that help you ship what you intended to.
+ADHD-friendly focus sessions for Claude Code. CLI skills + slash commands that help you ship what you intended to.
 
 ## The problem
 
@@ -18,7 +18,7 @@ One command in your project directory:
 npx @vignu10/nilai setup
 ```
 
-That's it. This registers the MCP server, scaffolds the focus session files, installs hooks, and adds slash commands.
+That's it. This scaffolds the focus session files, installs hooks, and adds slash commands.
 
 Done. Start a Claude Code session and tell it what you're working on. Nilai handles the rest.
 
@@ -28,7 +28,6 @@ If you prefer step-by-step control:
 
 ```bash
 npx @vignu10/nilai init              # Scaffold focus session files + slash commands
-claude mcp add nilai -- npx -y -p @vignu10/nilai nilai-mcp   # Register MCP server
 npx @vignu10/nilai install-hooks     # Install hooks (UserPromptSubmit, SessionStart, PostToolUse, Stop)
 ```
 
@@ -44,13 +43,20 @@ npx @vignu10/nilai install-hooks     # Install hooks (UserPromptSubmit, SessionS
 
 ## Two ways to use it
 
-### MCP tools (automatic)
+### CLI commands (automatic)
 
-Claude automatically calls the `focus_*` MCP tools based on the NILAI.md protocol loaded in your CLAUDE.md. No user action needed — Claude starts sessions, logs milestones, parks tangents, and ends with a retro on its own.
+Claude automatically runs `nilai <command>` via Bash based on the NILAI.md protocol loaded in your CLAUDE.md. No user action needed — Claude starts sessions, logs milestones, parks tangents, and ends with a retro on its own. You can also run any command directly in your terminal:
+
+```bash
+nilai start "Add retry logic" --criteria "Retries on transient failures" --time 45
+nilai status
+nilai log "Added retry with exponential backoff"
+nilai end
+```
 
 ### Slash commands (user-invoked)
 
-15 slash commands are installed to `.claude/skills/` for direct invocation:
+15 slash commands are installed to `.claude/skills/` for direct invocation in Claude Code:
 
 | Command | What it does |
 |---------|-------------|
@@ -69,34 +75,6 @@ Claude automatically calls the `focus_*` MCP tools based on the NILAI.md protoco
 | `/focus-sessions` | List all sessions for the project |
 | `/focus-recent` | 7-day session history summary |
 | `/focus-list-parked` | Review parked ideas |
-
-## MCP tools reference
-
-Nilai gives Claude 14 `focus_*` tools:
-
-### Session lifecycle
-
-| Tool | What it does |
-|------|-------------|
-| `focus_start` | Start a session — rejects vague tasks. Supports intensity levels: `low` (permissive), `medium` (default), `high` (strict) |
-| `focus_quick` | Start a quick session with minimal ceremony — task only, auto-generates criteria, 25min default |
-| `focus_status` | Check current session state, including last activity snapshot |
-| `focus_end` | End session and generate a retro |
-| `focus_resume` | Pick up an archived or abandoned session |
-| `focus_sessions` | List all sessions for the project (active, completed, abandoned) |
-| `focus_recent` | 7-day session history summary — "what did I ship?" |
-
-### Scope and focus
-
-| Tool | What it does |
-|------|-------------|
-| `focus_check` | Ask "is this action in scope?" before acting |
-| `focus_park` | Park a tangent to `LATER.md` instead of chasing it |
-| `focus_scope_expand` | Deliberately expand scope with optional timebox extension |
-| `focus_log` | Log a verifiable milestone |
-| `focus_progress` | Show criteria checklist + milestones |
-| `focus_pulse` | Check time usage with a nudge if over budget |
-| `focus_list_parked` | Review parked ideas |
 
 ## Hooks (automatic, zero user action)
 
@@ -134,7 +112,6 @@ This removes:
 - Nilai entries from `.gitignore`
 - Nilai hooks from `.claude/settings.json`
 - Slash commands from `.claude/skills/`
-- MCP server registration (`claude mcp remove nilai`)
 
 ## What `nilai init` does
 
@@ -225,29 +202,6 @@ The opinions are the product.
 
 ## Troubleshooting
 
-### MCP error: Connection closed
-
-The MCP server crashed or couldn't start. Fix:
-
-```bash
-# Check if the server starts
-claude mcp list
-
-# If failed, remove and re-register
-claude mcp remove nilai
-claude mcp add nilai -- npx -y -p @vignu10/nilai nilai-mcp
-
-# Then restart your Claude Code session
-```
-
-If it still fails, test the server directly:
-
-```bash
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' | npx -y -p @vignu10/nilai nilai-mcp
-```
-
-If you see a JSON response, the server works — the issue is your Claude Code registration. If it errors, check your Node.js version (`node >= 20`).
-
 ### Permission denied when running npx
 
 ```bash
@@ -256,14 +210,7 @@ npx clear-npx-cache
 npx @vignu10/nilai setup
 ```
 
-### Tools not showing up in Claude Code
-
-The MCP server needs to be registered before starting a Claude Code session. If you registered it mid-session:
-
-1. Exit the session (`/exit` or Ctrl+C)
-2. Start a new session — tools load on session start
-
-### Claude ignores the focus tools
+### Claude ignores the focus commands
 
 Make sure `NILAI.md` exists in your project root and `CLAUDE.md` references it with `@NILAI.md`. Run `npx @vignu10/nilai init` to set this up.
 
@@ -295,44 +242,42 @@ npm install
 
 ```bash
 npm run build        # Build to dist/
-npm run dev          # Run MCP server with tsx (no build needed)
 npm test             # Run all tests (75 tests, vitest)
 npm run lint         # TypeScript type check
 ```
 
 ### Testing locally
 
-Register the local build with Claude Code:
-
-```bash
-claude mcp add nilai -- node /path/to/nilai/dist/server.js
-```
-
-Or link globally to test the CLI:
+Link globally to test the CLI:
 
 ```bash
 npm link
 nilai init
 nilai install-hooks
+nilai quick "Test session"
+nilai status
+nilai end
 ```
 
 ### Project structure
 
 ```
 src/
-  server.ts              # MCP server entry point
-  cli.ts                 # CLI entry (init, install-hooks, setup, update, uninstall)
+  cli.ts                 # CLI entry (init, setup, start, status, end, ...)
   hook.ts                # Hook router (dispatches by event type)
   hooks/                 # Hook handlers
     user-prompt-submit.ts
     session-start.ts     # Orphan sweep + snapshot restore
     post-tool-use.ts     # Snapshot save + time nudge + scope drift + expiry
     stop.ts              # Auto-end with retro
-  tools/                 # 14 focus_* tool handlers
+  tools/                 # Focus tool handlers (shared by CLI and hooks)
+  cli/                   # CLI command implementations
+    dispatch.ts          # Focus subcommand routing
+    run-tool.ts          # Handler result adapter
+    install-skills.ts    # Skill file installation
   state/                 # Session, history, LATER.md read/write
   validation/            # Vague-task detection
   util/                  # Time formatting and nudges
-  cli/                   # CLI command implementations
   templates/             # NILAI.md template
 source/
   skills/                # 15 slash command skill definitions
