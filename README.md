@@ -36,17 +36,14 @@ Nilai gives Claude 10 `focus_*` tools and a companion file (`NILAI.md`) that tea
 ## Install
 
 ```bash
-# 1. Install the package
-npm install -g nilai
+# 1. Initialize in your project
+npx @vignu10/nilai init
 
-# 2. Initialize in your project
-nilai init
+# 2. Register the MCP server
+claude mcp add nilai -- npx -y @vignu10/nilai-mcp
 
-# 3. Register the MCP server
-claude mcp add nilai -- npx -y nilai-mcp
-
-# 4. (Optional) Install the prompt hook
-nilai install-hooks
+# 3. (Optional) Install the prompt hook
+npx @vignu10/nilai install-hooks
 ```
 
 Three steps, under two minutes to your first session.

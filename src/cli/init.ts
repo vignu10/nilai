@@ -51,6 +51,6 @@ export function runInit(cwd: string): void {
   }
 
   console.log("\nNilai initialized. Next steps:");
-  console.log("  1. claude mcp add nilai -- npx -y nilai-mcp");
-  console.log("  2. nilai install-hooks");
+  console.log("  1. claude mcp add nilai -- npx -y @vignu10/nilai-mcp");
+  console.log("  2. npx @vignu10/nilai install-hooks");
 }
