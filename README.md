@@ -8,6 +8,26 @@ ADHD-friendly focus sessions for Claude Code. An MCP server + companion that hel
 
 Claude Code makes it frictionless to drift. One sentence takes you from "fix the auth bug" to "refactor the entire middleware" — and two hours later you can't reconstruct what actually shipped. This isn't a discipline failure. It's a medium failure: the impulse and the action are simultaneous in a chat-driven tool.
 
+## Quick start
+
+Run these two commands in your project directory:
+
+```bash
+# 1. Register the MCP server (one-time)
+claude mcp add nilai -- npx -y @vignu10/nilai-mcp
+
+# 2. Scaffold focus session files
+npx @vignu10/nilai init
+```
+
+Done. Start a Claude Code session and tell it what you're working on. Nilai handles the rest.
+
+**Optional** — install the prompt hook for automatic session reminders:
+
+```bash
+npx @vignu10/nilai install-hooks
+```
+
 ## What Nilai does
 
 - **Forces concrete task articulation** before any work begins.
@@ -33,21 +53,6 @@ Nilai gives Claude 10 `focus_*` tools and a companion file (`NILAI.md`) that tea
 | `focus_resume` | Pick up an archived session |
 | `focus_list_parked` | Review parked ideas |
 
-## Install
-
-```bash
-# 1. Initialize in your project
-npx @vignu10/nilai init
-
-# 2. Register the MCP server
-claude mcp add nilai -- npx -y @vignu10/nilai-mcp
-
-# 3. (Optional) Install the prompt hook
-npx @vignu10/nilai install-hooks
-```
-
-Three steps, under two minutes to your first session.
-
 ## What `nilai init` does
 
 - Creates `.focus/` directory (session state, gitignored)
@@ -55,18 +60,7 @@ Three steps, under two minutes to your first session.
 - Creates or updates `CLAUDE.md` with `@NILAI.md` reference
 - Updates `.gitignore` for session state
 
-## Usage
-
-Start a Claude Code session in your project. When you tell Claude what you want to work on, it will:
-
-1. Ask you for a concrete task, done criteria, and a time box
-2. Call `focus_start` to begin the session
-3. Call `focus_check` before actions to stay on scope
-4. Call `focus_park` when you mention tangents
-5. Call `focus_log` at verifiable checkpoints
-6. Call `focus_end` when you're done, showing a retro
-
-### Example session
+## Example session
 
 ```
 You: I need to add retry logic to the login API endpoint
@@ -126,6 +120,67 @@ project-root/
 - No encouragement messages or emoji parties.
 
 The opinions are the product.
+
+## Contributing
+
+Contributions are welcome. To get started:
+
+```bash
+git clone https://github.com/vignu10/nilai.git
+cd nilai
+npm install
+```
+
+### Development commands
+
+```bash
+npm run build        # Build to dist/
+npm run dev          # Run MCP server with tsx (no build needed)
+npm test             # Run all tests (64 tests, vitest)
+npm run lint         # TypeScript type check
+```
+
+### Testing locally
+
+Register the local build with Claude Code:
+
+```bash
+claude mcp add nilai -- node /path/to/nilai/dist/server.js
+```
+
+Or link globally to test the CLI:
+
+```bash
+npm link
+nilai init
+nilai install-hooks
+```
+
+### Project structure
+
+```
+src/
+  server.ts              # MCP server entry point
+  cli.ts                 # CLI entry (init, install-hooks)
+  hook.ts                # UserPromptSubmit hook
+  tools/                 # 10 focus_* tool handlers
+  state/                 # Session, history, LATER.md read/write
+  validation/            # Vague-task detection
+  util/                  # Time formatting and nudges
+  cli/                   # CLI command implementations
+  templates/             # NILAI.md template
+```
+
+### What to contribute
+
+- **Bug fixes** — open an issue first, then PR
+- **v0.2 features** — see PRD.md section 14 (session recovery, snapshot, abandoned sessions)
+- **v0.3 features** — see PRD.md section 15 (focus_quick, time nudges, scope drift)
+- **Hooks-only fork** — documented as a contribution opportunity in the PRD
+
+### Commit style
+
+Conventional commits. Keep messages concise — describe the change, not the process.
 
 ## License
 
